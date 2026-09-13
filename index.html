@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Medidas de Seguridad HTTP & CSP contra hacking / XSS -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https:;">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  
+  <title>Family Finance Pro</title>
+
+  <!-- FontAwesome con Subresource Integrity (SRI) -->
+  <link 
+    rel="stylesheet" 
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
+    crossorigin="anonymous" 
+    referrerpolicy="no-referrer" 
+  />
+
+  <style>
+    :root {
+      --primary: #1e293b;
+      --secondary: #0f172a;
+      --accent: #2563eb;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --whatsapp: #25D366;
+      --whatsapp-hover: #1DA851;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text: #334155;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Header */
+    header { background: var(--primary); color: white; padding: 1.2rem; }
+    .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; gap: 10px; }
+    h1 { font-size: 1.8rem; }
+    .subtitle { font-size: 0.95rem; color: #cbd5e1; font-weight: 400; margin-top: 2px; }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+    /* Switcher Idioma & Acciones */
+    .btn-top {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-top:hover { background: rgba(255, 255, 255, 0.25); }
+
+    /* Floating Whatsapp */
+    .btn-whatsapp-float {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background-color: var(--whatsapp);
+      color: #ffffff;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: all 0.2s ease;
+      z-index: 999;
+    }
+    .btn-whatsapp-float:hover { background-color: var(--whatsapp-hover); transform: translateY(-2px); }
+
+    /* Tabs Navigation */
+    nav { background: var(--secondary); display: flex; justify-content: center; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      padding: 0.9rem 1.1rem;
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .nav-btn.active, .nav-btn:hover { color: white; border-bottom-color: var(--accent); }
+
+    /* Main Container */
+    main { max-width: 1200px; width: 100%; margin: 1.5rem auto; padding: 0 1rem; flex: 1; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
+    .card h2 { font-size: 1.2rem; color: var(--primary); }
+
+    /* Inputs & Form Elements */
+    input, select, button { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-size: 0.88rem; }
+    input:focus, select:focus { border-color: var(--accent); }
+
+    button.btn-primary { background: var(--accent); color: white; border: none; cursor: pointer; font-weight: 600; }
+    button.btn-primary:hover { opacity: 0.9; }
+    button.btn-secondary { background: white; color: var(--accent); border: 1px solid var(--accent); cursor: pointer; font-weight: 600; }
+    button.btn-secondary:hover { background: #eff6ff; }
+    button.btn-danger { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; cursor: pointer; }
+    button.btn-danger:hover { background: #fca5a5; }
+
+    .account-form-grid { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 1rem; }
+
+    /* Tables */
+    .table-responsive { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.88rem; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    th { background: #f1f5f9; color: var(--primary); font-weight: 600; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+
+    /* Cuentas T más amplias (menos por renglón) */
+    .t-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1.25rem; }
+    .t-account-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+    }
+    .t-account-header { background: var(--primary); color: white; padding: 10px; text-align: center; font-weight: bold; font-size: 0.95rem; }
+    .t-account-body { display: flex; flex: 1; border-top: 2px solid var(--primary); min-height: 200px; }
+    .t-column { flex: 1; padding: 8px; font-size: 0.82rem; overflow-y: auto; max-height: 280px; }
+    .t-column:first-child { border-right: 1px solid var(--border); }
+    .t-column-header { text-align: center; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 6px; }
+    
+    /* Disposición flexible de la línea en cuenta T para evitar desfasaje de decimales */
+    .t-entry { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; word-break: break-word; }
+    .t-entry span { flex: 1; }
+    .t-entry strong { white-space: nowrap; text-align: right; }
+    .t-balance { padding: 8px 12px; font-size: 0.88rem; background: #f8fafc; border-top: 1px solid var(--border); text-align: right; }
+
+    /* Modales */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      display: none; justify-content: center; align-items: center; z-index: 2000;
+      padding: 15px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: white; border-radius: 8px; max-width: 650px; width: 100%;
+      max-height: 90vh; overflow-y: auto; padding: 1.5rem; position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-close { position: absolute; right: 15px; top: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
+
+    /* Ejemplo Libro Diario dentro del Modal */
+    .example-box { background: #f8fafc; border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-top: 10px; }
+    .journal-example-table { width: 100%; font-size: 0.82rem; margin-top: 6px; border: 1px solid var(--border); }
+    .journal-example-table td, .journal-example-table th { padding: 5px 8px; }
+
+    /* Footer Ajustado */
+    footer {
+      background: var(--primary);
+      color: #94a3b8;
+      padding: 1.2rem;
+      font-size: 0.82rem;
+      margin-top: auto;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+    .footer-line-1 { font-weight: 500; color: #cbd5e1; }
+    .footer-line-2 { color: #94a3b8; }
+
+    /* Estilos Pestaña Conceptos */
+    .concepts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .concept-card { border: 1px solid var(--border); border-radius: 6px; padding: 1rem; background: #fff; }
+    .concept-card h3 { font-size: 1.05rem; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+
+    /* Print Styles */
+    @media print {
+      header, nav, .header-actions, .btn-whatsapp-float, button, .account-form-grid, .journal-lines-actions { display: none !important; }
+      body { background: white; color: black; }
+      .card { border: none; box-shadow: none; padding: 0; }
+      main { max-width: 100%; margin: 0; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-top">
+      <div>
+        <h1>Family Finance Pro</h1>
+        <p class="subtitle" data-i18n="app_subtitle">Sistema de finanzas familiares</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-top" onclick="window.print()"><i class="fas fa-print"></i> <span data-i18n="btn_print">Imprimir</span></button>
+        <button class="btn-top" onclick="downloadBackup()"><i class="fas fa-download"></i> <span data-i18n="btn_export">Descargar</span></button>
+        <button class="btn-top" id="lang-toggle" onclick="toggleLanguage()">English</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navegación -->
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('accounts')" data-i18n="tab_accounts">Plan de Cuentas</button>
+    <button class="nav-btn" onclick="switchTab('initial')" data-i18n="tab_initial">Balance Inicial</button>
+    <button class="nav-btn" onclick="switchTab('journal')" data-i18n="tab_journal">Libro Diario</button>
+    <button class="nav-btn" onclick="switchTab('t-accounts')" data-i18n="tab_taccounts">Cuentas T</button>
+    <button class="nav-btn" onclick="switchTab('budget')" data-i18n="tab_budget">Presupuesto</button>
+    <button class="nav-btn" onclick="switchTab('reports')" data-i18n="tab_reports">Reportes</button>
+    <button class="nav-btn" onclick="switchTab('concepts')" data-i18n="tab_concepts">Conceptos</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- TAB: PLAN DE CUENTAS -->
+    <section id="tab-accounts" class="tab-content active">
+      <div class="card">
+        <div class="card-header-flex">
+          <h2 data-i18n="add_account">Agregar Nueva Cuenta</h2>
+          <button class="btn-secondary" onclick="openModal('modal-accounts-help')">
+            <i class="fas fa-question-circle"></i> <span data-i18n="btn_examples">Ejemplos de Cuentas</span>
+          </button>
+        </div>
+        <div class="account-form-grid">
+          <input type="text" id="acc-code" placeholder="Código (ej. 103)" style="width: 120px;" data-i18n-ph="ph_acc_code">
+          <input type="text" id="acc-name-es" placeholder="Nombre (Español)" style="flex: 1; min-width: 200px;" data-i18n-ph="ph_acc_name_es" required>
+          <select id="acc-type">
+            <option value="Asset" data-i18n="type_asset">Activo</option>
+            <option value="Liability" data-i18n="type_liability">Pasivo</option>
+            <option value="Equity" data-i18n="type_equity">Patrimonio</option>
+            <option value="Revenue" data-i18n="type_income">Ingreso</option>
+            <option value="Expense" data-i18n="type_expense">Gasto</option>
+          </select>
+          <button class="btn-primary" onclick="addCustomAccount()" data-i18n="btn_save">Guardar Cuenta</button>
+          <button class="btn-secondary" onclick="loadDefaultAccounts()" data-i18n="btn_load_typical">Cargar Plan Típico Ampliado</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="chart_accounts">Plan de Cuentas Registrado</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 100px;" data-i18n="col_code">Código</th>
+                <th data-i18n="col_name">Nombre de Cuenta (Editable)</th>
+                <th data-i18n="col_type">Tipo</th>
+                <th style="width: 120px;" class="text-center" data-i18n="col_actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="accounts-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: BALANCE INICIAL -->
+    <section id="tab-initial" class="tab-content">
+      <div class="card">
+        <h2 data-i18n="initial_balance">Configurar Balance Inicial</h2>
+        <div class="account-form-grid">
+          <select id="initial-acc-select" style="flex: 1; min-width: 220px;" required></select>
+          <input type="text" id="initial-amount" placeholder="Monto Inicial" data-i18n-ph="ph_amount" oninput="formatInputCurrency(this)">
+          <button class="btn-primary" onclick="addInitialBalance()" data-i18n="btn_add">Agregar / Actualizar</button>
+        </div>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="col_account">Cuenta</th>
+                <th data-i18n="col_type">Tipo</th>
+                <th class="text-right" data-i18n="col_amount">Monto</th>
+                <th class="text-center" style="width: 120px;" data-i18n="col_actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="initial-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: LIBRO DIARIO -->
+    <section id="tab-journal" class="tab-content">
+      <div class="card">
+        <div class="card-header-flex">
+          <h2 data-i18n="journal_entry">Nuevo Asiento Contable</h2>
+          <button class="btn-secondary" onclick="openModal('modal-journal-help')">
+            <i class="fas fa-book-open"></i> <span data-i18n="btn_journal_examples">Ejemplos de Registros</span>
+          </button>
+        </div>
+        <form id="journal-form" onsubmit="addJournalEntry(event)">
+          <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+            <input type="date" id="entry-date" required>
+            <input type="text" id="entry-desc" placeholder="Descripción de la transacción" style="flex: 1;" data-i18n-ph="ph_desc" required>
+          </div>
+
+          <div id="journal-lines-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 1rem;">
+            <button type="button" class="btn-secondary" onclick="addJournalLine()" data-i18n="btn_add_line">+ Agregar Línea</button>
+            <div style="font-size: 0.9rem;">
+              <span><span data-i18n="lbl_total_debit">Total Debe:</span> <strong id="total-debit-display">$0,00</strong></span> | 
+              <span><span data-i18n="lbl_total_credit">Total Haber:</span> <strong id="total-credit-display">$0,00</strong></span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" data-i18n="btn_register">Registrar Asiento</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 data-i18n="journal_records">Registros del Libro Diario</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 110px;" data-i18n="col_date">Fecha</th>
+                <th data-i18n="col_desc_details">Descripción y Cuentas</th>
+                <th class="text-right" style="width: 130px;" data-i18n="col_debit">Debe</th>
+                <th class="text-right" style="width: 130px;" data-i18n="col_credit">Haber</th>
+                <th class="text-center" style="width: 100px;" data-i18n="col_actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="journal-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: CUENTAS T -->
+    <section id="tab-t-accounts" class="tab-content">
+      <div class="card">
+        <h2 data-i18n="t_accounts_title">Libro Mayor (Cuentas T)</h2>
+        <div class="t-grid" id="t-accounts-container"></div>
+      </div>
+    </section>
+
+    <!-- TAB: PRESUPUESTO -->
+    <section id="tab-budget" class="tab-content">
+      <div class="card">
+        <div class="card-header-flex">
+          <h2 data-i18n="budget_title">Control Presupuestario</h2>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="budget-period" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_period">Período:</label>
+            <select id="budget-period" onchange="renderBudgetTable()">
+              <option value="daily" data-i18n="per_daily">Diario</option>
+              <option value="weekly" data-i18n="per_weekly">Semanal</option>
+              <option value="monthly" selected data-i18n="per_monthly">Mensual</option>
+              <option value="quarterly" data-i18n="per_quarterly">Trimestral</option>
+              <option value="semiannual" data-i18n="per_semiannual">Semestral</option>
+              <option value="annual" data-i18n="per_annual">Anual</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="account-form-grid">
+          <select id="budget-acc-select" style="flex: 1; min-width: 220px;"></select>
+          <input type="text" id="budget-amount" placeholder="Monto Presupuestado" data-i18n-ph="ph_budget_amount" oninput="formatInputCurrency(this)">
+          <button class="btn-primary" onclick="setBudgetAccount()" data-i18n="btn_set_budget">Asignar Presupuesto</button>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="col_account">Cuenta</th>
+                <th class="text-right" data-i18n="col_budgeted">Presupuestado</th>
+                <th class="text-right" data-i18n="col_actual">Ejecutado Real</th>
+                <th class="text-right" data-i18n="col_variance">Variación</th>
+                <th class="text-center" style="width: 100px;" data-i18n="col_actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="budget-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: REPORTES -->
+    <section id="tab-reports" class="tab-content">
+      <div class="card">
+        <div class="card-header-flex">
+          <h2 data-i18n="reports_title">Estados Financieros</h2>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <label for="report-period" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_period">Período del Reporte:</label>
+            <select id="report-period" onchange="onReportPeriodChange()">
+              <option value="daily" data-i18n="per_daily">Diario</option>
+              <option value="weekly" data-i18n="per_weekly">Semanal</option>
+              <option value="monthly" selected data-i18n="per_monthly">Mensual</option>
+              <option value="quarterly" data-i18n="per_quarterly">Trimestral</option>
+              <option value="semiannual" data-i18n="per_semiannual">Semestral</option>
+              <option value="annual" data-i18n="per_annual">Anual</option>
+              <option value="all" data-i18n="per_all">Todo el Histórico</option>
+            </select>
+
+            <!-- Selector dinámico específico según el período elegido -->
+            <div id="report-subselectors" style="display: inline-flex; gap: 6px; align-items: center;"></div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+          <!-- Estado de Resultados -->
+          <div style="background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 1rem;">
+            <h3 style="border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 10px;" data-i18n="income_statement">Estado de Resultados</h3>
+            <div id="income-statement-body"></div>
+          </div>
+
+          <!-- Balance General -->
+          <div style="background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 1rem;">
+            <h3 style="border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 10px;" data-i18n="balance_sheet">Balance General</h3>
+            <div id="balance-sheet-body"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: CONCEPTOS -->
+    <section id="tab-concepts" class="tab-content">
+      <div class="card">
+        <h2 style="margin-bottom: 1rem;" data-i18n="concepts_title">Glosario y Conceptos Financieros</h2>
+        <div class="concepts-grid">
+          <div class="concept-card">
+            <h3><i class="fas fa-wallet"></i> <span data-i18n="concept_asset_title">Activos</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_asset_desc">Bienes, derechos y recursos económicos poseídos por la familia (ej. efectivo, depósitos bancarios, propiedades, inversiones).</p>
+          </div>
+          <div class="concept-card">
+            <h3><i class="fas fa-file-invoice-dollar"></i> <span data-i18n="concept_liability_title">Pasivos</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_liability_desc">Obligaciones financieras y deudas pendientes con terceros (ej. consumos en tarjeta de crédito, préstamos bancarios, deudas acumuladas).</p>
+          </div>
+          <div class="concept-card">
+            <h3><i class="fas fa-chart-pie"></i> <span data-i18n="concept_equity_title">Patrimonio Neto</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_equity_desc">La diferencia residual entre el Total de Activos y el Total de Pasivos. Representa el valor neto real del patrimonio familiar acumulado.</p>
+          </div>
+          <div class="concept-card">
+            <h3><i class="fas fa-hand-holding-usd"></i> <span data-i18n="concept_revenue_title">Ingresos</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_revenue_desc">Entradas netas de recursos económicos generados por la actividad laboral, rentas, intereses o rendimientos de inversiones.</p>
+          </div>
+          <div class="concept-card">
+            <h3><i class="fas fa-shopping-cart"></i> <span data-i18n="concept_expense_title">Gastos</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_expense_desc">Salidas o flujos consumidos necesarios para satisfacer el mantenimiento, alimentación, transporte, educación y bienestar familiar.</p>
+          </div>
+          <div class="concept-card">
+            <h3><i class="fas fa-balance-scale"></i> <span data-i18n="concept_double_title">Partida Doble</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_double_desc">Principio contable según el cual cada transacción registrada afecta como mínimo a dos cuentas, de modo que el total del Debe equivale exactamente al total del Haber.</p>
+          </div>
+
+          <!-- Explicación Estado de Resultados -->
+          <div class="concept-card" style="grid-column: span 1;">
+            <h3><i class="fas fa-file-alt"></i> <span data-i18n="concept_is_title">Estado de Resultados</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_is_desc">Muestra la dinámica económica durante un período determinado. Mide los Ingresos acumulados menos los Gastos incurridos, dando como resultado el Resultado Neto (Ganancia o Pérdida del período), el cual impacta directamente sobre el Patrimonio Neto aumentándolo o disminuyéndolo.</p>
+          </div>
+
+          <!-- Explicación Balance General -->
+          <div class="concept-card" style="grid-column: span 1;">
+            <h3><i class="fas fa-balance-scale-right"></i> <span data-i18n="concept_bs_title">Balance General</span></h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_bs_desc">Estructura estática a una fecha dada. Presenta la foto patrimonial de la entidad bajo la condición fundamental de equilibrio: Activo = Pasivo + Patrimonio Neto (A = P + PN). El Patrimonio Neto se integra con el Capital Inicial acumulado más el Resultado del Ejercicio.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modales de Ayuda / Ejemplos -->
+  <div class="modal-overlay" id="modal-accounts-help">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-accounts-help')">&times;</button>
+      <h3 style="margin-bottom: 10px; color: var(--primary);" data-i18n="help_acc_title">¿Cómo agregar una cuenta?</h3>
+      <p style="font-size: 0.9rem; line-height: 1.5; color: var(--text-muted); margin-bottom: 12px;" data-i18n="help_acc_desc">
+        Asigna un código numérico estructurado y selecciona el rubro contable correspondiente.
+      </p>
+      <div class="example-box">
+        <strong>Ejemplo:</strong><br>
+        • <strong>Código:</strong> 103<br>
+        • <strong>Nombre:</strong> Billetera Virtual<br>
+        • <strong>Tipo:</strong> Activo (Es dinero disponible)
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-journal-help">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('modal-journal-help')">&times;</button>
+      <h3 style="margin-bottom: 10px; color: var(--primary);" data-i18n="help_journal_title">Ejemplos de Asientos Contables</h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted);" data-i18n="help_journal_desc">Recuerda la partida doble: el total cargado en el Debe debe ser idéntico al total en el Haber.</p>
+
+      <div class="example-box">
+        <strong>Ejemplo 1: Compra de Supermercado en efectivo</strong>
+        <table class="journal-example-table">
+          <thead><tr><th>Descripción / Cuenta</th><th class="text-right">Debe</th><th class="text-right">Haber</th></tr></thead>
+          <tbody>
+            <tr><td>Compra supermercado</td><td></td><td></td></tr>
+            <tr><td style="padding-left: 15px;">Alimentación (Gasto)</td><td class="text-right">$100,00</td><td class="text-right"></td></tr>
+            <tr><td style="padding-left: 15px;">Efectivo (Activo)</td><td class="text-right"></td><td class="text-right">$100,00</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="example-box">
+        <strong>Ejemplo 2: Cobro de Salario en Banco</strong>
+        <table class="journal-example-table">
+          <thead><tr><th>Descripción / Cuenta</th><th class="text-right">Debe</th><th class="text-right">Haber</th></tr></thead>
+          <tbody>
+            <tr><td>Cobro de sueldo mensual</td><td></td><td></td></tr>
+            <tr><td style="padding-left: 15px;">Banco (Activo)</td><td class="text-right">$1.500,00</td><td class="text-right"></td></tr>
+            <tr><td style="padding-left: 15px;">Salario (Ingreso)</td><td class="text-right"></td><td class="text-right">$1.500,00</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-line-1">Family Finance System - Diseñado para uso educativo y familiar</div>
+      <div class="footer-line-2">Adrián R. Cecotto 2026 - Todos los derechos reservados</div>
+    </div>
+  </footer>
+
+  <!-- Botón WhatsApp -->
+  <a href="https://wa.me/16822313578" class="btn-whatsapp-float" target="_blank" rel="noopener" aria-label="Contacto WhatsApp">
+    <span data-i18n="whatsapp_contact">Consultas o Contacto</span>
+    <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i>
+  </a>
+
+  <script>
+    // --- STATE MANAGEMENT ---
+    let currentLang = 'es';
+
+    // Cuentas por defecto ampliadas con más rubros de gastos típicos
+    let accounts = [
+      { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
+      { id: "102", es: "Banco / Cuenta Corriente", en: "Bank Account", type: "Asset" },
+      { id: "103", es: "Billetera Virtual", en: "Digital Wallet", type: "Asset" },
+      { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
+      { id: "202", es: "Préstamo Personal", en: "Personal Loan", type: "Liability" },
+      { id: "301", es: "Capital Familiar Acumulado", en: "Family Equity", type: "Equity" },
+      { id: "401", es: "Sueldos / Honorarios", en: "Salaries / Fees", type: "Revenue" },
+      { id: "402", es: "Rentas / Inversiones", en: "Investments", type: "Revenue" },
+      { id: "501", es: "Alimentación", en: "Groceries", type: "Expense", budget: 600 },
+      { id: "502", es: "Vivienda y Servicios (Luz, Agua, Gas)", en: "Housing & Utilities", type: "Expense", budget: 1200 },
+      { id: "503", es: "Transporte y Combustible", en: "Transport & Fuel", type: "Expense", budget: 300 },
+      { id: "504", es: "Salud y Medicina", en: "Healthcare & Pharmacy", type: "Expense", budget: 200 },
+      { id: "505", es: "Educación y Colegios", en: "Education & Tuition", type: "Expense", budget: 400 },
+      { id: "506", es: "Entretenimiento y Ocio", en: "Entertainment & Leisure", type: "Expense", budget: 150 },
+      { id: "507", es: "Ropa y Calzado", en: "Clothing & Footwear", type: "Expense", budget: 150 },
+      { id: "508", es: "Mantenimiento del Hogar", en: "Home Maintenance", type: "Expense", budget: 100 },
+      { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250 },
+      { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100 }
+    ];
+
+    let initialBalances = [];
+    let journalEntries = [];
+    let draftLines = [];
+    let lineIdCounter = 0;
+
+    const translations = {
+      es: {
+        app_subtitle: "Sistema de finanzas familiares",
+        btn_print: "Imprimir",
+        btn_export: "Descargar",
+        tab_accounts: "Plan de Cuentas",
+        tab_initial: "Balance Inicial",
+        tab_journal: "Libro Diario",
+        tab_taccounts: "Cuentas T",
+        tab_budget: "Presupuesto",
+        tab_reports: "Reportes",
+        tab_concepts: "Conceptos",
+        add_account: "Agregar Nueva Cuenta",
+        btn_examples: "Ejemplos de Cuentas",
+        btn_save: "Guardar Cuenta",
+        btn_load_typical: "Cargar Plan Típico Ampliado",
+        chart_accounts: "Plan de Cuentas Registrado",
+        col_code: "Código",
+        col_name: "Nombre de Cuenta (Editable)",
+        col_type: "Tipo",
+        col_actions: "Acciones",
+        initial_balance: "Configurar Balance Inicial",
+        col_account: "Cuenta",
+        col_amount: "Monto",
+        btn_add: "Agregar / Actualizar",
+        journal_entry: "Nuevo Asiento Contable",
+        btn_journal_examples: "Ejemplos de Registros",
+        ph_desc: "Descripción de la transacción",
+        btn_add_line: "+ Agregar Línea",
+        lbl_total_debit: "Total Debe:",
+        lbl_total_credit: "Total Haber:",
+        btn_register: "Registrar Asiento",
+        journal_records: "Registros del Libro Diario",
+        col_date: "Fecha",
+        col_desc_details: "Descripción y Cuentas",
+        col_debit: "Debe",
+        col_credit: "Haber",
+        t_accounts_title: "Libro Mayor (Cuentas T)",
+        t_debit: "Debe",
+        t_credit: "Haber",
+        t_balance: "Saldo",
+        t_init_balance: "Saldo Inicial",
+        budget_title: "Control Presupuestario",
+        lbl_period: "Período:",
+        per_daily: "Diario",
+        per_weekly: "Semanal",
+        per_monthly: "Mensual",
+        per_quarterly: "Trimestral",
+        per_semiannual: "Semestral",
+        per_annual: "Anual",
+        per_all: "Todo el Histórico",
+        ph_budget_amount: "Monto Presupuestado",
+        btn_set_budget: "Asignar Presupuesto",
+        col_budgeted: "Presupuestado",
+        col_actual: "Ejecutado Real",
+        col_variance: "Variación",
+        reports_title: "Estados Financieros",
+        income_statement: "Estado de Resultados",
+        balance_sheet: "Balance General",
+        whatsapp_contact: "Consultas o Contacto",
+        type_asset: "Activo",
+        type_liability: "Pasivo",
+        type_equity: "Patrimonio",
+        type_revenue: "Ingreso",
+        type_income: "Ingreso",
+        type_expense: "Gasto",
+        confirm_delete_acc: "¿Está seguro de eliminar esta cuenta? Se afectarán los registros donde haya sido utilizada.",
+        confirm_delete_entry: "¿Está seguro de eliminar este asiento contable?",
+        confirm_delete_initial: "¿Está seguro de eliminar esta cuenta del balance inicial?",
+        help_acc_title: "¿Cómo agregar una cuenta?",
+        help_acc_desc: "Asigna un código numérico estructurado y selecciona el rubro contable correspondiente.",
+        help_journal_title: "Ejemplos de Asientos Contables",
+        help_journal_desc: "Recuerda la partida doble: el total cargado en el Debe debe ser idéntico al total en el Haber.",
+        opt_select_account: "-- Seleccionar cuenta --",
+        opt_debit: "Debe",
+        opt_credit: "Haber",
+        ph_acc_code: "Código (103)",
+        ph_acc_name_es: "Nombre de la cuenta",
+        ph_amount: "Monto Inicial",
+        concepts_title: "Glosario y Conceptos Financieros",
+        concept_asset_title: "Activos",
+        concept_asset_desc: "Bienes, derechos y recursos económicos poseídos por la familia (ej. efectivo, depósitos bancarios, propiedades, inversiones).",
+        concept_liability_title: "Pasivos",
+        concept_liability_desc: "Obligaciones financieras y deudas pendientes con terceros (ej. consumos en tarjeta de crédito, préstamos bancarios, deudas acumuladas).",
+        concept_equity_title: "Patrimonio Neto",
+        concept_equity_desc: "La diferencia residual entre el Total de Activos y el Total de Pasivos. Representa el valor neto real del patrimonio familiar acumulado.",
+        concept_revenue_title: "Ingresos",
+        concept_revenue_desc: "Entradas netas de recursos económicos generados por la actividad laboral, rentas, intereses o rendimientos de inversiones.",
+        concept_expense_title: "Gastos",
+        concept_expense_desc: "Salidas o flujos consumidos necesarios para satisfacer el mantenimiento, alimentación, transporte, educación y bienestar familiar.",
+        concept_double_title: "Partida Doble",
+        concept_double_desc: "Principio contable según el cual cada transacción registrada afecta como mínimo a dos cuentas, de modo que el total del Debe equivale exactamente al total del Haber.",
+        concept_is_title: "Estado de Resultados",
+        concept_is_desc: "Muestra la dinámica económica durante un período determinado. Mide los Ingresos acumulados menos los Gastos incurridos, dando como resultado el Resultado Neto (Ganancia o Pérdida del período), el cual impacta directamente sobre el Patrimonio Neto aumentándolo o disminuyéndolo.",
+        concept_bs_title: "Balance General",
+        concept_bs_desc: "Estructura estática a una fecha dada. Presenta la foto patrimonial de la entidad bajo la condición fundamental de equilibrio: Activo = Pasivo + Patrimonio Neto (A = P + PN). El Patrimonio Neto se integra con el Capital Inicial acumulado más el Resultado del Ejercicio.",
+        
+        rpt_total_revenue: "Total Ingresos",
+        rpt_total_expense: "Total Gastos",
+        rpt_net_income: "Resultado Neto",
+        rpt_net_period_income: "Resultado del Ejercicio",
+        rpt_assets: "ACTIVOS",
+        rpt_subtotal_assets: "Subtotal Activos",
+        rpt_liabilities: "PASIVOS",
+        rpt_subtotal_liabilities: "Subtotal Pasivos",
+        rpt_equity: "PATRIMONIO NETO",
+        rpt_subtotal_equity: "Subtotal Patrimonio Neto",
+        rpt_total_assets: "TOTAL ACTIVO",
+        rpt_total_liab_eq: "TOTAL PASIVO + PATRIMONIO",
+        rpt_balance_control: "Control de Saldos (A = P + PN):",
+        rpt_status_balanced: "BALANCEADO CORRECTAMENTE",
+        rpt_status_unbalanced: "DESBALANCE: "
+      },
+      en: {
+        app_subtitle: "Family finance system",
+        btn_print: "Print",
+        btn_export: "Download",
+        tab_accounts: "Chart of Accounts",
+        tab_initial: "Initial Balance",
+        tab_journal: "General Journal",
+        tab_taccounts: "T-Accounts",
+        tab_budget: "Budget Control",
+        tab_reports: "Financial Reports",
+        tab_concepts: "Concepts",
+        add_account: "Add New Account",
+        btn_examples: "Account Examples",
+        btn_save: "Save Account",
+        btn_load_typical: "Load Expanded Sample Accounts",
+        chart_accounts: "Chart of Accounts List",
+        col_code: "Code",
+        col_name: "Account Name (Editable)",
+        col_type: "Type",
+        col_actions: "Actions",
+        initial_balance: "Set Initial Balance",
+        col_account: "Account",
+        col_amount: "Amount",
+        btn_add: "Add / Update",
+        journal_entry: "New Journal Entry",
+        btn_journal_examples: "Entry Examples",
+        ph_desc: "Transaction description",
+        btn_add_line: "+ Add Line",
+        lbl_total_debit: "Total Debit:",
+        lbl_total_credit: "Total Credit:",
+        btn_register: "Post Entry",
+        journal_records: "Journal Records",
+        col_date: "Date",
+        col_desc_details: "Description & Accounts",
+        col_debit: "Debit",
+        col_credit: "Credit",
+        t_accounts_title: "General Ledger (T-Accounts)",
+        t_debit: "Debit",
+        t_credit: "Credit",
+        t_balance: "Balance",
+        t_init_balance: "Initial Balance",
+        budget_title: "Budget Control",
+        lbl_period: "Period:",
+        per_daily: "Daily",
+        per_weekly: "Weekly",
+        per_monthly: "Monthly",
+        per_quarterly: "Quarterly",
+        per_semiannual: "Semi-Annual",
+        per_annual: "Annual",
+        per_all: "All History",
+        ph_budget_amount: "Budgeted Amount",
+        btn_set_budget: "Set Budget",
+        col_budgeted: "Budgeted",
+        col_actual: "Actual Spent",
+        col_variance: "Variance",
+        reports_title: "Financial Statements",
+        income_statement: "Income Statement",
+        balance_sheet: "Balance Sheet",
+        whatsapp_contact: "Inquiries or Contact",
+        type_asset: "Asset",
+        type_liability: "Liability",
+        type_equity: "Equity",
+        type_revenue: "Revenue",
+        type_income: "Revenue",
+        type_expense: "Expense",
+        confirm_delete_acc: "Are you sure you want to delete this account? Associated records will be affected.",
+        confirm_delete_entry: "Are you sure you want to delete this journal entry?",
+        confirm_delete_initial: "Are you sure you want to remove this account from initial balance?",
+        help_acc_title: "How to add an account?",
+        help_acc_desc: "Assign a structured numerical code and select the accounting type.",
+        help_journal_title: "Journal Entry Examples",
+        help_journal_desc: "Remember double-entry bookkeeping: Total Debits must equal Total Credits.",
+        opt_select_account: "-- Select account --",
+        opt_debit: "Debit",
+        opt_credit: "Credit",
+        ph_acc_code: "Code (103)",
+        ph_acc_name_es: "Account Name",
+        ph_amount: "Initial Amount",
+        concepts_title: "Financial Glossary & Concepts",
+        concept_asset_title: "Assets",
+        concept_asset_desc: "Goods, rights, and economic resources owned by the family (e.g. cash, bank deposits, properties, investments).",
+        concept_liability_title: "Liabilities",
+        concept_liability_desc: "Financial obligations and outstanding debts owed to third parties (e.g. credit card balances, loans).",
+        concept_equity_title: "Equity",
+        concept_equity_desc: "The residual difference between Total Assets and Total Liabilities. Represents the net worth of family equity.",
+        concept_revenue_title: "Revenue",
+        concept_revenue_desc: "Inflow of economic benefits generated by wages, salaries, investments, or investment yields.",
+        concept_expense_title: "Expenses",
+        concept_expense_desc: "Outflows or consumed costs needed for family maintenance, food, utilities, education, and living expenses.",
+        concept_double_title: "Double-Entry System",
+        concept_double_desc: "Accounting rule stating every entry requires an equal amount in debits and credits.",
+        concept_is_title: "Income Statement",
+        concept_is_desc: "Shows financial activity over a given period. Measures total revenues minus total expenses, resulting in Net Income (Profit or Loss), which directly impacts total Equity, increasing or decreasing it.",
+        concept_bs_title: "Balance Sheet",
+        concept_bs_desc: "A financial snapshot at a specific point in time based on the fundamental equation: Assets = Liabilities + Equity (A = L + E). Equity includes accumulated Capital plus Net Income.",
+
+        rpt_total_revenue: "Total Revenue",
+        rpt_total_expense: "Total Expenses",
+        rpt_net_income: "Net Income",
+        rpt_net_period_income: "Period Net Income",
+        rpt_assets: "ASSETS",
+        rpt_subtotal_assets: "Subtotal Assets",
+        rpt_liabilities: "LIABILITIES",
+        rpt_subtotal_liabilities: "Subtotal Liabilities",
+        rpt_equity: "EQUITY",
+        rpt_subtotal_equity: "Subtotal Equity",
+        rpt_total_assets: "TOTAL ASSETS",
+        rpt_total_liab_eq: "TOTAL LIABILITIES + EQUITY",
+        rpt_balance_control: "Balance Check (A = L + E):",
+        rpt_status_balanced: "BALANCED CORRECTLY",
+        rpt_status_unbalanced: "IMBALANCE: "
+      }
+    };
+
+    // --- FORMATEADOR NUMÉRICO L10N Y ENTRADA DESDE DECIMALES ---
+    function formatCurrency(val) {
+      const num = parseFloat(val) || 0;
+      if (currentLang === 'es') {
+        return '$' + num.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      } else {
+        return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+    }
+
+    function parseFormattedNumber(val) {
+      if (typeof val === 'number') return val;
+      if (!val) return 0;
+      let clean = val.replace(/[^0-9,.-\s]/g, '').trim();
+      if (currentLang === 'es') {
+        clean = clean.replace(/\./g, '').replace(',', '.');
+      } else {
+        clean = clean.replace(/,/g, '');
+      }
+      return parseFloat(clean) || 0;
+    }
+
+    function formatInputCurrency(input) {
+      let valueStr = input.value;
+      let clean = valueStr.replace(/[^0-9]/g, '');
+      if (!clean) {
+        input.value = '';
+        return;
+      }
+      let num = parseFloat(clean) / 100;
+      if (currentLang === 'es') {
+        input.value = num.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      } else {
+        input.value = num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+    }
+
+    // --- DRAFT LINES FOR JOURNAL ---
+    function newDraftLine(type) {
+      lineIdCounter++;
+      return { uid: lineIdCounter, accId: '', type: type, amount: '' };
+    }
+    function resetDraftLines() {
+      draftLines = [ newDraftLine('debit'), newDraftLine('credit') ];
+    }
+    resetDraftLines();
+
+    // --- INTERFACE HELPERS ---
+    function openModal(id) { document.getElementById(id).classList.add('active'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      if(event && event.target) {
+        event.target.classList.add('active');
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'es' ? 'en' : 'es';
+      document.documentElement.lang = currentLang;
+      document.getElementById('lang-toggle').innerText = currentLang === 'es' ? 'English' : 'Español';
+      updateDOM();
+    }
+
+    function getAccName(acc) {
+      if (!acc) return '';
+      return acc[currentLang] || acc.es;
+    }
+
+    function updateDOM() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang][key]) el.innerHTML = translations[currentLang][key];
+      });
+
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if (translations[currentLang][key]) el.placeholder = translations[currentLang][key];
+      });
+
+      renderAccountsTable();
+      populateDropdowns();
+      renderInitialBalanceTable();
+      renderJournalTable();
+      renderTAccounts();
+      renderBudgetTable();
+      onReportPeriodChange();
+    }
+
+    // --- PLAN DE CUENTAS ---
+    function addCustomAccount() {
+      const codeInput = document.getElementById('acc-code').value.trim();
+      const nameEs = document.getElementById('acc-name-es').value.trim();
+      const type = document.getElementById('acc-type').value;
+
+      if (!nameEs) return alert(currentLang === 'es' ? "Por favor ingresa un nombre para la cuenta" : "Please enter an account name");
+
+      let code = codeInput;
+      if (!code || code === '100') {
+        const basePrefix = { Asset: 100, Liability: 200, Equity: 300, Revenue: 400, Expense: 500 }[type];
+        code = (basePrefix + accounts.filter(a => a.type === type).length + 1).toString();
+      }
+
+      accounts.push({ id: code, es: nameEs, en: nameEs, type: type, budget: 0 });
+      document.getElementById('acc-code').value = '';
+      document.getElementById('acc-name-es').value = '';
+      updateDOM();
+    }
+
+    function loadDefaultAccounts() {
+      const typical = [
+        { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
+        { id: "102", es: "Banco / Cuenta Corriente", en: "Bank Account", type: "Asset" },
+        { id: "103", es: "Billetera Virtual", en: "Digital Wallet", type: "Asset" },
+        { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
+        { id: "202", es: "Préstamo Personal", en: "Personal Loan", type: "Liability" },
+        { id: "301", es: "Capital Familiar Acumulado", en: "Family Equity", type: "Equity" },
+        { id: "401", es: "Sueldos / Honorarios", en: "Salaries / Fees", type: "Revenue" },
+        { id: "402", es: "Rentas / Inversiones", en: "Investments", type: "Revenue" },
+        { id: "501", es: "Alimentación", en: "Groceries", type: "Expense", budget: 600 },
+        { id: "502", es: "Vivienda y Servicios (Luz, Agua, Gas)", en: "Housing & Utilities", type: "Expense", budget: 1200 },
+        { id: "503", es: "Transporte y Combustible", en: "Transport & Fuel", type: "Expense", budget: 300 },
+        { id: "504", es: "Salud y Medicina", en: "Healthcare & Pharmacy", type: "Expense", budget: 200 },
+        { id: "505", es: "Educación y Colegios", en: "Education & Tuition", type: "Expense", budget: 400 },
+        { id: "506", es: "Entretenimiento y Ocio", en: "Entertainment & Leisure", type: "Expense", budget: 150 },
+        { id: "507", es: "Ropa y Calzado", en: "Clothing & Footwear", type: "Expense", budget: 150 },
+        { id: "508", es: "Mantenimiento del Hogar", en: "Home Maintenance", type: "Expense", budget: 100 },
+        { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250 },
+        { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100 }
+      ];
+      accounts = typical;
+      updateDOM();
+    }
+
+    function updateAccountName(code, newName) {
+      const acc = accounts.find(a => a.id === code);
+      if (acc) {
+        acc.es = newName;
+        acc.en = newName;
+        populateDropdowns();
+        renderInitialBalanceTable();
+        renderJournalTable();
+        renderTAccounts();
+        renderBudgetTable();
+        renderReports();
+      }
+    }
+
+    function deleteAccount(code) {
+      if (confirm(translations[currentLang].confirm_delete_acc)) {
+        accounts = accounts.filter(a => a.id !== code);
+        initialBalances = initialBalances.filter(b => b.accId !== code);
+        updateDOM();
+      }
+    }
+
+    function renderAccountsTable() {
+      const tbody = document.getElementById('accounts-table-body');
+      tbody.innerHTML = accounts.map(a => {
+        const typeKey = 'type_' + a.type.toLowerCase();
+        const typeLabel = translations[currentLang][typeKey] || a.type;
+        return `
+          <tr>
+            <td><strong>${a.id}</strong></td>
+            <td><input type="text" value="${getAccName(a)}" style="width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 4px 8px; background: #fff;" onchange="updateAccountName('${a.id}', this.value)"></td>
+            <td>${typeLabel}</td>
+            <td class="text-center">
+              <button class="btn-danger" onclick="deleteAccount('${a.id}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function accountOptionsHtml(selectedId) {
+      const typeOrder = ['Asset', 'Liability', 'Equity', 'Revenue', 'Expense'];
+      const groups = {};
+      accounts.forEach(a => {
+        if (!groups[a.type]) groups[a.type] = [];
+        groups[a.type].push(a);
+      });
+
+      let html = `<option value="" disabled ${!selectedId ? 'selected' : ''}>${translations[currentLang].opt_select_account}</option>`;
+      typeOrder.forEach(type => {
+        if (!groups[type]) return;
+        const label = translations[currentLang]['type_' + type.toLowerCase()] || type;
+        html += `<optgroup label="${label}">`;
+        groups[type].forEach(a => {
+          html += `<option value="${a.id}" ${a.id === selectedId ? 'selected' : ''}>${a.id} - ${getAccName(a)}</option>`;
+        });
+        html += `</optgroup>`;
+      });
+      return html;
+    }
+
+    function populateDropdowns() {
+      const initialSelect = document.getElementById('initial-acc-select');
+      if (initialSelect) initialSelect.innerHTML = accountOptionsHtml(initialSelect.value || '');
+      
+      const budgetSelect = document.getElementById('budget-acc-select');
+      if (budgetSelect) budgetSelect.innerHTML = accountOptionsHtml(budgetSelect.value || '');
+
+      renderJournalLines();
+    }
+
+    // --- BALANCE INICIAL ---
+    function addInitialBalance() {
+      const accId = document.getElementById('initial-acc-select').value;
+      const amountVal = document.getElementById('initial-amount').value;
+      const amount = parseFormattedNumber(amountVal);
+
+      if (!accId || isNaN(amount) || amount <= 0) return alert(currentLang === 'es' ? "Selecciona una cuenta e ingresa un monto válido mayor a cero" : "Select an account and enter a valid amount greater than zero");
+
+      const existing = initialBalances.find(b => b.accId === accId);
+      if (existing) existing.amount = amount;
+      else initialBalances.push({ accId, amount });
+
+      document.getElementById('initial-amount').value = '';
+      renderInitialBalanceTable();
+      renderTAccounts();
+      renderReports();
+    }
+
+    function updateInitialAmount(accId, amountStr) {
+      const existing = initialBalances.find(b => b.accId === accId);
+      if (existing) existing.amount = parseFormattedNumber(amountStr);
+      renderTAccounts();
+      renderReports();
+    }
+
+    function deleteInitialBalance(accId) {
+      if (confirm(translations[currentLang].confirm_delete_initial)) {
+        initialBalances = initialBalances.filter(b => b.accId !== accId);
+        renderInitialBalanceTable();
+        renderTAccounts();
+        renderReports();
+      }
+    }
+
+    function renderInitialBalanceTable() {
+      const tbody = document.getElementById('initial-table-body');
+      tbody.innerHTML = initialBalances.map(b => {
+        const acc = accounts.find(a => a.id === b.accId);
+        if (!acc) return '';
+        const typeKey = 'type_' + acc.type.toLowerCase();
+        const formattedVal = formatCurrency(b.amount).replace('$', '').trim();
+        return `
+          <tr>
+            <td>${getAccName(acc)}</td>
+            <td>${translations[currentLang][typeKey] || acc.type}</td>
+            <td class="text-right">
+              <input type="text" value="${formattedVal}" style="width: 130px; text-align: right;" oninput="formatInputCurrency(this)" onchange="updateInitialAmount('${b.accId}', this.value)">
+            </td>
+            <td class="text-center">
+              <button class="btn-danger" onclick="deleteInitialBalance('${b.accId}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- LIBRO DIARIO CON REGISTRO NUMÉRICO DESDE DECIMALES ---
+    function renderJournalLines() {
+      const container = document.getElementById('journal-lines-container');
+      if (!container) return;
+
+      container.innerHTML = draftLines.map(line => {
+        const formattedVal = line.amount ? formatCurrency(line.amount).replace('$', '').trim() : '';
+        return `
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <select style="flex: 2; min-width: 200px;" onchange="updateDraftLine(${line.uid}, 'accId', this.value)">
+              ${accountOptionsHtml(line.accId)}
+            </select>
+            <select style="flex: 1; min-width: 100px;" onchange="updateDraftLine(${line.uid}, 'type', this.value)">
+              <option value="debit" ${line.type === 'debit' ? 'selected' : ''}>${translations[currentLang].opt_debit}</option>
+              <option value="credit" ${line.type === 'credit' ? 'selected' : ''}>${translations[currentLang].opt_credit}</option>
+            </select>
+            <input type="text" placeholder="Monto ($0,00)" style="flex: 1; min-width: 110px; text-align: right;" value="${formattedVal}" oninput="formatInputCurrency(this); updateDraftLine(${line.uid}, 'amount', this.value);">
+            <button type="button" class="btn-danger" onclick="removeDraftLine(${line.uid})" ${draftLines.length <= 2 ? 'disabled' : ''}>&times;</button>
+          </div>
+        `;
+      }).join('');
+
+      updateJournalTotals();
+    }
+
+    function updateDraftLine(uid, field, value) {
+      const line = draftLines.find(l => l.uid === uid);
+      if (line) { 
+        if (field === 'amount') {
+          line.amount = parseFormattedNumber(value);
+        } else {
+          line[field] = value; 
+        }
+        updateJournalTotals(); 
+      }
+    }
+
+    function addJournalLine() { draftLines.push(newDraftLine('debit')); renderJournalLines(); }
+    function removeDraftLine(uid) { if (draftLines.length > 2) { draftLines = draftLines.filter(l => l.uid !== uid); renderJournalLines(); } }
+
+    function updateJournalTotals() {
+      const totalDebit = draftLines.filter(l => l.type === 'debit').reduce((s, l) => s + (parseFloat(l.amount) || 0), 0);
+      const totalCredit = draftLines.filter(l => l.type === 'credit').reduce((s, l) => s + (parseFloat(l.amount) || 0), 0);
+      document.getElementById('total-debit-display').textContent = formatCurrency(totalDebit);
+      document.getElementById('total-credit-display').textContent = formatCurrency(totalCredit);
+    }
+
+    function addJournalEntry(e) {
+      e.preventDefault();
+      const date = document.getElementById('entry-date').value;
+      const desc = document.getElementById('entry-desc').value.trim();
+
+      const lines = draftLines
+        .filter(l => l.accId && parseFloat(l.amount) > 0)
+        .map(l => ({ accId: l.accId, type: l.type, amount: parseFloat(l.amount) }));
+
+      if (lines.length < 2) return alert(currentLang === 'es' ? "Debe incluir al menos dos movimientos" : "Must include at least two entries");
+
+      const totalDebit = lines.filter(l => l.type === 'debit').reduce((s, l) => s + l.amount, 0);
+      const totalCredit = lines.filter(l => l.type === 'credit').reduce((s, l) => s + l.amount, 0);
+
+      if (Math.abs(totalDebit - totalCredit) > 0.001) return alert(currentLang === 'es' ? "El asiento no está balanceado: Debe y Haber deben coincidir" : "Entry is unbalanced: Debits and Credits must match");
+
+      journalEntries.push({ id: Date.now(), date, desc, lines });
+      document.getElementById('entry-desc').value = '';
+      resetDraftLines();
+      renderJournalLines();
+      renderJournalTable();
+      renderTAccounts();
+      renderBudgetTable();
+      renderReports();
+    }
+
+    function deleteJournalEntry(id) {
+      if (confirm(translations[currentLang].confirm_delete_entry)) {
+        journalEntries = journalEntries.filter(e => e.id !== id);
+        renderJournalTable();
+        renderTAccounts();
+        renderBudgetTable();
+        renderReports();
+      }
+    }
+
+    function renderJournalTable() {
+      const tbody = document.getElementById('journal-table-body');
+      tbody.innerHTML = journalEntries.map(e => {
+        const linesHtml = e.lines.map(l => {
+          const acc = accounts.find(a => a.id === l.accId);
+          return `
+            <tr style="border: none;">
+              <td style="padding: 2px 0; font-style: ${l.type === 'credit' ? 'italic' : 'normal'}; padding-left: ${l.type === 'credit' ? '20px' : '0px'};">
+                ${getAccName(acc)}
+              </td>
+              <td class="text-right" style="padding: 2px 0;">${l.type === 'debit' ? formatCurrency(l.amount) : ''}</td>
+              <td class="text-right" style="padding: 2px 0;">${l.type === 'credit' ? formatCurrency(l.amount) : ''}</td>
+            </tr>
+          `;
+        }).join('');
+
+        return `
+          <tr>
+            <td>${e.date}</td>
+            <td colspan="3">
+              <strong>${e.desc}</strong>
+              <table style="width: 100%; margin-top: 4px; border: none;">
+                ${linesHtml}
+              </table>
+            </td>
+            <td class="text-center">
+              <button class="btn-danger" onclick="deleteJournalEntry(${e.id})"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // --- CUENTAS T (LIBRO MAYOR) TRADUCIBLES Y AMPLIAS ---
+    function renderTAccounts() {
+      const container = document.getElementById('t-accounts-container');
+      container.innerHTML = '';
+      const t = translations[currentLang];
+
+      accounts.forEach(acc => {
+        let debits = [];
+        let credits = [];
+
+        const init = initialBalances.find(b => b.accId === acc.id);
+        if (init) {
+          if (acc.type === 'Asset' || acc.type === 'Expense') debits.push({ desc: t.t_init_balance, amount: init.amount });
+          else credits.push({ desc: t.t_init_balance, amount: init.amount });
+        }
+
+        journalEntries.forEach(entry => {
+          entry.lines.forEach(line => {
+            if (line.accId !== acc.id) return;
+            if (line.type === 'debit') debits.push({ desc: entry.desc, amount: line.amount });
+            else credits.push({ desc: entry.desc, amount: line.amount });
+          });
+        });
+
+        if (debits.length === 0 && credits.length === 0) return;
+
+        const totalDebit = debits.reduce((s, d) => s + d.amount, 0);
+        const totalCredit = credits.reduce((s, c) => s + c.amount, 0);
+
+        container.innerHTML += `
+          <div class="t-account-card">
+            <div class="t-account-header">${acc.id} - ${getAccName(acc)}</div>
+            <div class="t-account-body">
+              <div class="t-column">
+                <div class="t-column-header">${t.t_debit}</div>
+                ${debits.map(d => `<div class="t-entry"><span>${d.desc}</span> <strong>${formatCurrency(d.amount)}</strong></div>`).join('')}
+              </div>
+              <div class="t-column">
+                <div class="t-column-header">${t.t_credit}</div>
+                ${credits.map(c => `<div class="t-entry"><span>${c.desc}</span> <strong>${formatCurrency(c.amount)}</strong></div>`).join('')}
+              </div>
+            </div>
+            <div class="t-balance">
+              <strong>${t.t_balance}: ${formatCurrency(Math.abs(totalDebit - totalCredit))}</strong>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // --- PRESUPUESTO CON REGISTRO NUMÉRICO DESDE DECIMALES ---
+    function setBudgetAccount() {
+      const accId = document.getElementById('budget-acc-select').value;
+      const amountVal = document.getElementById('budget-amount').value;
+      const amount = parseFormattedNumber(amountVal);
+
+      if (!accId || isNaN(amount) || amount <= 0) return alert(currentLang === 'es' ? "Selecciona una cuenta e ingresa el valor a presupuestar" : "Select an account and enter a budgeted amount");
+
+      const acc = accounts.find(a => a.id === accId);
+      if (acc) acc.budget = amount;
+
+      document.getElementById('budget-amount').value = '';
+      renderBudgetTable();
+    }
+
+    function renderBudgetTable() {
+      const tbody = document.getElementById('budget-table-body');
+      const budgetAccs = accounts.filter(a => a.budget !== undefined && a.budget > 0);
+
+      tbody.innerHTML = budgetAccs.map(acc => {
+        let actual = 0;
+        journalEntries.forEach(entry => {
+          entry.lines.forEach(line => {
+            if (line.accId !== acc.id) return;
+            if (acc.type === 'Expense' && line.type === 'debit') actual += line.amount;
+            if (acc.type === 'Revenue' && line.type === 'credit') actual += line.amount;
+          });
+        });
+
+        const budgeted = acc.budget || 0;
+        const variance = budgeted - actual;
+
+        return `
+          <tr>
+            <td>${getAccName(acc)}</td>
+            <td class="text-right">${formatCurrency(budgeted)}</td>
+            <td class="text-right"><strong>${formatCurrency(actual)}</strong></td>
+            <td class="text-right" style="color: ${variance < 0 ? 'var(--danger)' : 'var(--success)'}; font-weight: 600;">
+              ${formatCurrency(variance)}
+            </td>
+            <td class="text-center">
+              <button class="btn-danger" onclick="deleteBudget('${acc.id}')"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function deleteBudget(accId) {
+      const acc = accounts.find(a => a.id === accId);
+      if (acc) { acc.budget = 0; renderBudgetTable(); }
+    }
+
+    // --- CONTROL DINÁMICO DE SUB-SELECTORES DE PERÍODOS EN REPORTES ---
+    function onReportPeriodChange() {
+      const period = document.getElementById('report-period').value;
+      const container = document.getElementById('report-subselectors');
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
+
+      const monthNamesEs = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+      const monthNamesEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const monthNames = currentLang === 'es' ? monthNamesEs : monthNamesEn;
+
+      let html = '';
+
+      if (period === 'daily') {
+        const todayStr = now.toISOString().substring(0, 10);
+        html = `<input type="date" id="rpt-date-picker" value="${todayStr}" onchange="renderReports()">`;
+      } else if (period === 'weekly') {
+        const todayStr = now.toISOString().substring(0, 10);
+        html = `<input type="date" id="rpt-week-picker" value="${todayStr}" onchange="renderReports()">`;
+      } else if (period === 'monthly') {
+        html = `<select id="rpt-month-picker" onchange="renderReports()">`;
+        for (let i = 0; i < 12; i++) {
+          html += `<option value="${i}" ${i === currentMonth ? 'selected' : ''}>${monthNames[i]}</option>`;
+        }
+        html += `</select>`;
+        html += `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 80px;" onchange="renderReports()">`;
+      } else if (period === 'quarterly' || period === 'semiannual') {
+        html = `<span style="font-size:0.85rem; font-weight:600;">${currentLang === 'es' ? 'Meses:' : 'Months:'}</span>`;
+        html += `<select id="rpt-start-month" onchange="renderReports()">`;
+        for (let i = 0; i < 12; i++) {
+          html += `<option value="${i}" ${i === 0 ? 'selected' : ''}>${monthNames[i]}</option>`;
+        }
+        html += `</select>`;
+        html += `<span>-</span>`;
+        html += `<select id="rpt-end-month" onchange="renderReports()">`;
+        for (let i = 0; i < 12; i++) {
+          let defaultEnd = period === 'quarterly' ? 2 : 5;
+          html += `<option value="${i}" ${i === defaultEnd ? 'selected' : ''}>${monthNames[i]}</option>`;
+        }
+        html += `</select>`;
+        html += `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 80px;" onchange="renderReports()">`;
+      } else if (period === 'annual') {
+        html = `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 90px;" onchange="renderReports()">`;
+      }
+
+      container.innerHTML = html;
+      renderReports();
+    }
+
+    // --- FILTRADO AVANZADO POR PERÍODO ESPECÍFICO ---
+    function filterEntriesByPeriod(entries, period) {
+      if (period === 'all') return entries;
+      
+      return entries.filter(e => {
+        if (!e.date) return true;
+        const entryDate = new Date(e.date + 'T00:00:00');
+        
+        switch (period) {
+          case 'daily': {
+            const picker = document.getElementById('rpt-date-picker');
+            if (!picker || !picker.value) return true;
+            return e.date === picker.value;
+          }
+          case 'weekly': {
+            const picker = document.getElementById('rpt-week-picker');
+            if (!picker || !picker.value) return true;
+            const targetDate = new Date(picker.value + 'T00:00:00');
+            const diffTime = Math.abs(entryDate - targetDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays <= 7;
+          }
+          case 'monthly': {
+            const monthElem = document.getElementById('rpt-month-picker');
+            const yearElem = document.getElementById('rpt-year-picker');
+            if (!monthElem || !yearElem) return true;
+            return entryDate.getMonth() === parseInt(monthElem.value) && entryDate.getFullYear() === parseInt(yearElem.value);
+          }
+          case 'quarterly':
+          case 'semiannual': {
+            const startElem = document.getElementById('rpt-start-month');
+            const endElem = document.getElementById('rpt-end-month');
+            const yearElem = document.getElementById('rpt-year-picker');
+            if (!startElem || !endElem || !yearElem) return true;
+            const startM = parseInt(startElem.value);
+            const endM = parseInt(endElem.value);
+            const year = parseInt(yearElem.value);
+            const m = entryDate.getMonth();
+            return entryDate.getFullYear() === year && m >= startM && m <= endM;
+          }
+          case 'annual': {
+            const yearElem = document.getElementById('rpt-year-picker');
+            if (!yearElem) return true;
+            return entryDate.getFullYear() === parseInt(yearElem.value);
+          }
+          default:
+            return true;
+        }
+      });
+    }
+
+    // --- REPORTES FINANCIEROS ---
+    function renderReports() {
+      const periodSelect = document.getElementById('report-period');
+      const selectedPeriod = periodSelect ? periodSelect.value : 'monthly';
+      const t = translations[currentLang];
+
+      const filteredEntries = filterEntriesByPeriod(journalEntries, selectedPeriod);
+
+      const balances = {};
+      accounts.forEach(a => balances[a.id] = 0);
+
+      initialBalances.forEach(b => {
+        const acc = accounts.find(a => a.id === b.accId);
+        if (!acc) return;
+        balances[b.accId] += b.amount;
+      });
+
+      filteredEntries.forEach(entry => {
+        entry.lines.forEach(line => {
+          const acc = accounts.find(a => a.id === line.accId);
+          if (!acc) return;
+          if (acc.type === 'Asset' || acc.type === 'Expense') {
+            balances[line.accId] += (line.type === 'debit' ? line.amount : -line.amount);
+          } else {
+            balances[line.accId] += (line.type === 'credit' ? line.amount : -line.amount);
+          }
+        });
+      });
+
+      // 1. Estado de Resultados
+      let totalRevenue = 0;
+      let totalExpense = 0;
+      let incomeHtml = '<table style="width:100%;">';
+
+      accounts.filter(a => a.type === 'Revenue' && (balances[a.id] || 0) > 0).forEach(a => {
+        const val = balances[a.id] || 0;
+        totalRevenue += val;
+        incomeHtml += `<tr><td>${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
+      });
+      incomeHtml += `<tr style="font-weight:bold; background:#f1f5f9;"><td>${t.rpt_total_revenue}</td><td class="text-right">${formatCurrency(totalRevenue)}</td></tr>`;
+
+      accounts.filter(a => a.type === 'Expense' && (balances[a.id] || 0) > 0).forEach(a => {
+        const val = balances[a.id] || 0;
+        totalExpense += val;
+        incomeHtml += `<tr><td>${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
+      });
+      incomeHtml += `<tr style="font-weight:bold; background:#f1f5f9;"><td>${t.rpt_total_expense}</td><td class="text-right">${formatCurrency(totalExpense)}</td></tr>`;
+
+      const netIncome = totalRevenue - totalExpense;
+      incomeHtml += `<tr style="font-weight:bold; font-size:1rem; background:#e2e8f0;"><td>${t.rpt_net_income}</td><td class="text-right" style="color:${netIncome>=0?'var(--success)':'var(--danger)'}">${formatCurrency(netIncome)}</td></tr></table>`;
+
+      document.getElementById('income-statement-body').innerHTML = incomeHtml;
+
+      // 2. Balance General
+      let totalAsset = 0;
+      let totalLiability = 0;
+      let totalEquity = 0;
+      let balanceHtml = '<table style="width:100%;">';
+
+      // ACTIVOS
+      balanceHtml += `<tr><td colspan="2"><strong>${t.rpt_assets}</strong></td></tr>`;
+      accounts.filter(a => a.type === 'Asset' && (balances[a.id] || 0) > 0).forEach(a => {
+        const val = balances[a.id] || 0;
+        totalAsset += val;
+        balanceHtml += `<tr><td style="padding-left:12px;">${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
+      });
+      balanceHtml += `<tr style="font-weight:600; background:#f8fafc; border-top: 1px solid var(--border);"><td style="padding-left:12px;"><em>${t.rpt_subtotal_assets}</em></td><td class="text-right"><em>${formatCurrency(totalAsset)}</em></td></tr>`;
+
+      // PASIVOS
+      balanceHtml += `<tr><td colspan="2" style="padding-top:10px;"><strong>${t.rpt_liabilities}</strong></td></tr>`;
+      accounts.filter(a => a.type === 'Liability' && (balances[a.id] || 0) > 0).forEach(a => {
+        const val = balances[a.id] || 0;
+        totalLiability += val;
+        balanceHtml += `<tr><td style="padding-left:12px;">${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
+      });
+      balanceHtml += `<tr style="font-weight:600; background:#f8fafc; border-top: 1px solid var(--border);"><td style="padding-left:12px;"><em>${t.rpt_subtotal_liabilities}</em></td><td class="text-right"><em>${formatCurrency(totalLiability)}</em></td></tr>`;
+
+      // PATRIMONIO NETO
+      balanceHtml += `<tr><td colspan="2" style="padding-top:10px;"><strong>${t.rpt_equity}</strong></td></tr>`;
+      accounts.filter(a => a.type === 'Equity' && (balances[a.id] || 0) > 0).forEach(a => {
+        const val = balances[a.id] || 0;
+        totalEquity += val;
+        balanceHtml += `<tr><td style="padding-left:12px;">${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
+      });
+      
+      if (netIncome !== 0) {
+        balanceHtml += `<tr><td style="padding-left:12px;">${t.rpt_net_period_income}</td><td class="text-right">${formatCurrency(netIncome)}</td></tr>`;
+      }
+      totalEquity += netIncome;
+      balanceHtml += `<tr style="font-weight:600; background:#f8fafc; border-top: 1px solid var(--border);"><td style="padding-left:12px;"><em>${t.rpt_subtotal_equity}</em></td><td class="text-right"><em>${formatCurrency(totalEquity)}</em></td></tr>`;
+
+      const totalPasivoPatrimonio = totalLiability + totalEquity;
+      const diff = totalAsset - totalPasivoPatrimonio;
+      const isBalanced = Math.abs(diff) < 0.01;
+
+      // TOTALES
+      balanceHtml += `<tr style="font-weight:bold; background:#e2e8f0; border-top:2px solid var(--primary);"><td style="padding-top:8px; padding-bottom:8px;">${t.rpt_total_assets}</td><td class="text-right">${formatCurrency(totalAsset)}</td></tr>`;
+      balanceHtml += `<tr style="font-weight:bold; background:#e2e8f0;"><td style="padding-top:8px; padding-bottom:8px;">${t.rpt_total_liab_eq}</td><td class="text-right">${formatCurrency(totalPasivoPatrimonio)}</td></tr></table>`;
+
+      // CONTROL DE SALDOS
+      balanceHtml += `
+        <div style="margin-top: 15px; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; background-color: ${isBalanced ? '#dcfce7' : '#fee2e2'}; color: ${isBalanced ? '#166534' : '#991b1b'}; border: 1px solid ${isBalanced ? '#bbf7d0' : '#fecaca'};">
+          <span><i class="fas ${isBalanced ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${t.rpt_balance_control}</span>
+          <span>${isBalanced ? t.rpt_status_balanced : t.rpt_status_unbalanced + formatCurrency(diff)}</span>
+        </div>
+      `;
+
+      document.getElementById('balance-sheet-body').innerHTML = balanceHtml;
+    }
+
+    // --- RESPALDO / DESCARGA ---
+    function downloadBackup() {
+      const data = { accounts, initialBalances, journalEntries };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `FamilyFinance_Backup_${new Date().toISOString().substring(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // --- INICIALIZACIÓN ---
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById('entry-date').value = new Date().toISOString().substring(0, 10);
+      updateDOM();
+    });
+  </script>
+</body>
+</html>
