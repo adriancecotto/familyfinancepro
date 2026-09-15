@@ -230,13 +230,13 @@
 
   <!-- Navegación -->
   <nav>
-    <button class="nav-btn active" onclick="switchTab('accounts')" data-i18n="tab_accounts">Plan de Cuentas</button>
-    <button class="nav-btn" onclick="switchTab('initial')" data-i18n="tab_initial">Balance Inicial</button>
-    <button class="nav-btn" onclick="switchTab('journal')" data-i18n="tab_journal">Libro Diario</button>
-    <button class="nav-btn" onclick="switchTab('t-accounts')" data-i18n="tab_taccounts">Cuentas T</button>
-    <button class="nav-btn" onclick="switchTab('budget')" data-i18n="tab_budget">Presupuesto</button>
-    <button class="nav-btn" onclick="switchTab('reports')" data-i18n="tab_reports">Reportes</button>
-    <button class="nav-btn" onclick="switchTab('concepts')" data-i18n="tab_concepts">Conceptos</button>
+    <button class="nav-btn active" onclick="switchTab('accounts', this)" data-i18n="tab_accounts">Plan de Cuentas</button>
+    <button class="nav-btn" onclick="switchTab('initial', this)" data-i18n="tab_initial">Balance Inicial</button>
+    <button class="nav-btn" onclick="switchTab('journal', this)" data-i18n="tab_journal">Libro Diario</button>
+    <button class="nav-btn" onclick="switchTab('t-accounts', this)" data-i18n="tab_taccounts">Cuentas T</button>
+    <button class="nav-btn" onclick="switchTab('budget', this)" data-i18n="tab_budget">Presupuesto</button>
+    <button class="nav-btn" onclick="switchTab('reports', this)" data-i18n="tab_reports">Reportes</button>
+    <button class="nav-btn" onclick="switchTab('concepts', this)" data-i18n="tab_concepts">Conceptos</button>
   </nav>
 
   <!-- Main Content -->
@@ -380,6 +380,8 @@
               <option value="semiannual" data-i18n="per_semiannual">Semestral</option>
               <option value="annual" data-i18n="per_annual">Anual</option>
             </select>
+            <label for="budget-ref-date" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_ref_date">Fecha de referencia:</label>
+            <input type="date" id="budget-ref-date" onchange="renderBudgetTable()">
           </div>
         </div>
 
@@ -629,6 +631,7 @@
         t_init_balance: "Saldo Inicial",
         budget_title: "Control Presupuestario",
         lbl_period: "Período:",
+        lbl_ref_date: "Fecha de referencia:",
         per_daily: "Diario",
         per_weekly: "Semanal",
         per_monthly: "Mensual",
@@ -654,6 +657,15 @@
         confirm_delete_acc: "¿Está seguro de eliminar esta cuenta? Se afectarán los registros donde haya sido utilizada.",
         confirm_delete_entry: "¿Está seguro de eliminar este asiento contable?",
         confirm_delete_initial: "¿Está seguro de eliminar esta cuenta del balance inicial?",
+        confirm_load_typical: "Esto reemplazará todo tu Plan de Cuentas actual por el plan típico predeterminado. Las cuentas personalizadas que hayas creado se eliminarán, y los asientos o balances iniciales que las usen quedarán sin esa cuenta. ¿Deseas continuar?",
+        err_load_typical_blocked: "No se puede cargar el plan de cuentas típico: tienes asientos contables o balances iniciales que usan cuentas personalizadas que no forman parte del plan típico. Elimina o reasigna esos registros antes de continuar, para no dejar referencias inválidas.",
+        err_account_in_use: "No se puede eliminar esta cuenta porque tiene movimientos registrados en el Libro Diario. Elimina primero esos asientos.",
+        err_invalid_code: "El código debe ser numérico (por ejemplo: 103).",
+        err_duplicate_code: "Ese código ya existe. Ingresa uno diferente o deja el campo vacío para asignarlo automáticamente.",
+        err_missing_desc: "Debes ingresar una descripción para el asiento.",
+        err_missing_date: "Debes ingresar una fecha para el asiento.",
+        err_invalid_line: "Hay una línea incompleta o inválida: cada línea utilizada debe tener una cuenta existente y un monto mayor a cero.",
+        err_invalid_amount: "Ingresa un monto válido mayor a cero.",
         help_acc_title: "¿Cómo agregar una cuenta?",
         help_acc_desc: "Asigna un código numérico estructurado y selecciona el rubro contable correspondiente.",
         help_journal_title: "Ejemplos de Asientos Contables",
@@ -741,6 +753,7 @@
         t_init_balance: "Initial Balance",
         budget_title: "Budget Control",
         lbl_period: "Period:",
+        lbl_ref_date: "Reference date:",
         per_daily: "Daily",
         per_weekly: "Weekly",
         per_monthly: "Monthly",
@@ -766,6 +779,15 @@
         confirm_delete_acc: "Are you sure you want to delete this account? Associated records will be affected.",
         confirm_delete_entry: "Are you sure you want to delete this journal entry?",
         confirm_delete_initial: "Are you sure you want to remove this account from initial balance?",
+        confirm_load_typical: "This will replace your entire current Chart of Accounts with the default typical plan. Any custom accounts you created will be removed, and journal entries or initial balances that used them will be left referencing a missing account. Do you want to continue?",
+        err_load_typical_blocked: "Cannot load the typical chart of accounts: you have journal entries or initial balances using custom accounts that are not part of the typical plan. Delete or reassign those records first so no invalid references are left behind.",
+        err_account_in_use: "This account cannot be deleted because it has entries recorded in the General Journal. Delete those entries first.",
+        err_invalid_code: "The code must be numeric (e.g. 103).",
+        err_duplicate_code: "That code already exists. Enter a different one or leave the field blank to auto-assign it.",
+        err_missing_desc: "You must enter a description for the entry.",
+        err_missing_date: "You must enter a date for the entry.",
+        err_invalid_line: "There is an incomplete or invalid line: every line you use must have an existing account and an amount greater than zero.",
+        err_invalid_amount: "Enter a valid amount greater than zero.",
         help_acc_title: "How to add an account?",
         help_acc_desc: "Assign a structured numerical code and select the accounting type.",
         help_journal_title: "Journal Entry Examples",
@@ -863,12 +885,15 @@
     function openModal(id) { document.getElementById(id).classList.add('active'); }
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-    function switchTab(tabId) {
+    function switchTab(tabId, btnEl) {
+      // Corrección Fase 2 (#5): ya no depende del objeto global implícito `event`; el botón
+      // que originó la llamada se recibe explícitamente como segundo parámetro (this) desde
+      // cada onclick="switchTab('...', this)" en el HTML.
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(`tab-${tabId}`).classList.add('active');
-      if(event && event.target) {
-        event.target.classList.add('active');
+      if (btnEl) {
+        btnEl.classList.add('active');
       }
     }
 
@@ -879,9 +904,21 @@
       updateDOM();
     }
 
+    // Corrección Fase 1 (Seguridad / Output Safety): escape mínimo y localizado para texto
+    // ingresado por el usuario que se inserta en HTML (nombres de cuenta, descripciones de asientos).
+    function escapeHtml(str) {
+      if (str === undefined || str === null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function getAccName(acc) {
       if (!acc) return '';
-      return acc[currentLang] || acc.es;
+      return escapeHtml(acc[currentLang] || acc.es);
     }
 
     function updateDOM() {
@@ -913,9 +950,25 @@
       if (!nameEs) return alert(currentLang === 'es' ? "Por favor ingresa un nombre para la cuenta" : "Please enter an account name");
 
       let code = codeInput;
-      if (!code || code === '100') {
+
+      if (code) {
+        // Corrección Fase 1 (#5): el código debe seguir el esquema numérico estructurado ya usado por la app.
+        if (!/^[0-9]+$/.test(code)) {
+          return alert(translations[currentLang].err_invalid_code);
+        }
+        // Corrección Fase 1 (#4): rechazar códigos duplicados ANTES de insertar la cuenta.
+        if (accounts.some(a => a.id === code)) {
+          return alert(translations[currentLang].err_duplicate_code);
+        }
+      } else {
+        // Código no provisto: generar uno automáticamente dentro del rango numérico de su tipo,
+        // evitando colisiones con códigos ya existentes (antes podía coincidir con uno ya usado).
         const basePrefix = { Asset: 100, Liability: 200, Equity: 300, Revenue: 400, Expense: 500 }[type];
-        code = (basePrefix + accounts.filter(a => a.type === type).length + 1).toString();
+        let candidate = basePrefix + accounts.filter(a => a.type === type).length + 1;
+        while (accounts.some(a => a.id === candidate.toString())) {
+          candidate++;
+        }
+        code = candidate.toString();
       }
 
       accounts.push({ id: code, es: nameEs, en: nameEs, type: type, budget: 0 });
@@ -945,15 +998,38 @@
         { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250 },
         { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100 }
       ];
+      // Corrección Fase 2 (#6): reforzar la protección de Fase 1. Antes solo se advertía con un
+      // confirm() genérico; ahora, si reemplazar el plan de cuentas por el típico dejaría al
+      // Libro Diario o al Balance Inicial referenciando cuentas personalizadas que YA NO
+      // existirían (porque no forman parte del plan típico), se BLOQUEA la operación por
+      // completo en vez de solo advertir, evitando referencias huérfanas. Si no hay conflicto,
+      // se preserva la advertencia bilingüe existente antes del reemplazo destructivo.
+      const typicalIds = new Set(typical.map(a => a.id));
+      const wouldOrphanJournal = journalEntries.some(e => e.lines.some(l => !typicalIds.has(l.accId)));
+      const wouldOrphanInitial = initialBalances.some(b => !typicalIds.has(b.accId));
+
+      if (wouldOrphanJournal || wouldOrphanInitial) {
+        alert(translations[currentLang].err_load_typical_blocked);
+        return;
+      }
+
+      if (!confirm(translations[currentLang].confirm_load_typical)) return;
+
       accounts = typical;
       updateDOM();
     }
 
     function updateAccountName(code, newName) {
+      // Corrección Fase 1 (#10): no permitir dejar el nombre de una cuenta vacío (dato inválido).
+      const trimmed = (newName || '').trim();
+      if (!trimmed) {
+        renderAccountsTable();
+        return;
+      }
       const acc = accounts.find(a => a.id === code);
       if (acc) {
-        acc.es = newName;
-        acc.en = newName;
+        acc.es = trimmed;
+        acc.en = trimmed;
         populateDropdowns();
         renderInitialBalanceTable();
         renderJournalTable();
@@ -964,6 +1040,13 @@
     }
 
     function deleteAccount(code) {
+      // Corrección Fase 1 (#3): no permitir eliminar una cuenta referenciada en el Libro Diario,
+      // para no dejar líneas de asientos huérfanas apuntando a una cuenta inexistente.
+      const referencedInJournal = journalEntries.some(e => e.lines.some(l => l.accId === code));
+      if (referencedInJournal) {
+        alert(translations[currentLang].err_account_in_use);
+        return;
+      }
       if (confirm(translations[currentLang].confirm_delete_acc)) {
         accounts = accounts.filter(a => a.id !== code);
         initialBalances = initialBalances.filter(b => b.accId !== code);
@@ -1026,7 +1109,8 @@
       const amountVal = document.getElementById('initial-amount').value;
       const amount = parseFormattedNumber(amountVal);
 
-      if (!accId || isNaN(amount) || amount <= 0) return alert(currentLang === 'es' ? "Selecciona una cuenta e ingresa un monto válido mayor a cero" : "Select an account and enter a valid amount greater than zero");
+      // Corrección Fase 1 (#7): además de exigir monto > 0, verificar que la cuenta seleccionada exista.
+      if (!accId || !accounts.some(a => a.id === accId) || isNaN(amount) || amount <= 0) return alert(currentLang === 'es' ? "Selecciona una cuenta e ingresa un monto válido mayor a cero" : "Select an account and enter a valid amount greater than zero");
 
       const existing = initialBalances.find(b => b.accId === accId);
       if (existing) existing.amount = amount;
@@ -1039,8 +1123,17 @@
     }
 
     function updateInitialAmount(accId, amountStr) {
+      // Corrección Fase 1 (#7): no permitir que la edición del balance inicial deje valores
+      // inválidos, cero o negativos de forma silenciosa.
       const existing = initialBalances.find(b => b.accId === accId);
-      if (existing) existing.amount = parseFormattedNumber(amountStr);
+      if (!existing) return;
+      const amount = parseFormattedNumber(amountStr);
+      if (isNaN(amount) || amount <= 0) {
+        alert(translations[currentLang].err_invalid_amount);
+        renderInitialBalanceTable(); // revertir el campo al último valor válido
+        return;
+      }
+      existing.amount = amount;
       renderTAccounts();
       renderReports();
     }
@@ -1128,8 +1221,24 @@
       const date = document.getElementById('entry-date').value;
       const desc = document.getElementById('entry-desc').value.trim();
 
-      const lines = draftLines
-        .filter(l => l.accId && parseFloat(l.amount) > 0)
+      // Corrección Fase 1 (#6): rechazar descripción o fecha faltantes en lugar de continuar.
+      if (!desc) return alert(translations[currentLang].err_missing_desc);
+      if (!date) return alert(translations[currentLang].err_missing_date);
+
+      // Una línea se considera "cargada" si el usuario ingresó una cuenta o un monto.
+      // Las líneas completamente vacías (sin tocar) se ignoran, como antes.
+      const meaningfulLines = draftLines.filter(l => l.accId || parseFloat(l.amount) > 0);
+
+      // Corrección Fase 1 (#6): cualquier línea cargada debe estar completa y ser válida
+      // (cuenta existente, monto > 0 y no NaN). Antes, una línea incompleta se descartaba
+      // silenciosamente en vez de rechazar el asiento completo.
+      const hasInvalidLine = meaningfulLines.some(l => {
+        const amt = parseFloat(l.amount);
+        return !l.accId || !accounts.some(a => a.id === l.accId) || isNaN(amt) || amt <= 0 || (l.type !== 'debit' && l.type !== 'credit');
+      });
+      if (hasInvalidLine) return alert(translations[currentLang].err_invalid_line);
+
+      const lines = meaningfulLines
         .map(l => ({ accId: l.accId, type: l.type, amount: parseFloat(l.amount) }));
 
       if (lines.length < 2) return alert(currentLang === 'es' ? "Debe incluir al menos dos movimientos" : "Must include at least two entries");
@@ -1179,7 +1288,7 @@
           <tr>
             <td>${e.date}</td>
             <td colspan="3">
-              <strong>${e.desc}</strong>
+              <strong>${escapeHtml(e.desc)}</strong>
               <table style="width: 100%; margin-top: 4px; border: none;">
                 ${linesHtml}
               </table>
@@ -1227,11 +1336,11 @@
             <div class="t-account-body">
               <div class="t-column">
                 <div class="t-column-header">${t.t_debit}</div>
-                ${debits.map(d => `<div class="t-entry"><span>${d.desc}</span> <strong>${formatCurrency(d.amount)}</strong></div>`).join('')}
+                ${debits.map(d => `<div class="t-entry"><span>${escapeHtml(d.desc)}</span> <strong>${formatCurrency(d.amount)}</strong></div>`).join('')}
               </div>
               <div class="t-column">
                 <div class="t-column-header">${t.t_credit}</div>
-                ${credits.map(c => `<div class="t-entry"><span>${c.desc}</span> <strong>${formatCurrency(c.amount)}</strong></div>`).join('')}
+                ${credits.map(c => `<div class="t-entry"><span>${escapeHtml(c.desc)}</span> <strong>${formatCurrency(c.amount)}</strong></div>`).join('')}
               </div>
             </div>
             <div class="t-balance">
@@ -1261,9 +1370,27 @@
       const tbody = document.getElementById('budget-table-body');
       const budgetAccs = accounts.filter(a => a.budget !== undefined && a.budget > 0);
 
+      // Corrección Fase 1 (#2) + Fase 2 (#4): el período seleccionado ya no se ignora, y ya no
+      // se asume siempre "hoy" como referencia implícita. Se agregó el control mínimo necesario
+      // (una fecha de referencia, "budget-ref-date") para que el usuario pueda analizar un
+      // período histórico o futuro con el mismo selector de granularidad de siempre.
+      const periodSelect = document.getElementById('budget-period');
+      const budgetPeriod = periodSelect ? periodSelect.value : 'monthly';
+      const refDateInput = document.getElementById('budget-ref-date');
+      let refY, refM, refD;
+      if (refDateInput && refDateInput.value) {
+        const parts = refDateInput.value.split('-').map(Number);
+        refY = parts[0]; refM = parts[1] - 1; refD = parts[2];
+      } else {
+        const today = new Date();
+        refY = today.getFullYear(); refM = today.getMonth(); refD = today.getDate();
+      }
+      const budgetRange = computeRangeFromYMD(budgetPeriod, refY, refM, refD);
+
       tbody.innerHTML = budgetAccs.map(acc => {
         let actual = 0;
         journalEntries.forEach(entry => {
+          if (budgetRange && !(entry.date >= budgetRange.start && entry.date <= budgetRange.end)) return;
           entry.lines.forEach(line => {
             if (line.accId !== acc.id) return;
             if (acc.type === 'Expense' && line.type === 'debit') actual += line.amount;
@@ -1310,10 +1437,13 @@
       let html = '';
 
       if (period === 'daily') {
-        const todayStr = now.toISOString().substring(0, 10);
+        // Corrección Fase 2 (#3): usar el helper de fecha local (toISODate) en vez de
+        // now.toISOString(), que convierte a UTC y puede mostrar el día anterior/siguiente
+        // según la zona horaria del usuario.
+        const todayStr = toISODate(now);
         html = `<input type="date" id="rpt-date-picker" value="${todayStr}" onchange="renderReports()">`;
       } else if (period === 'weekly') {
-        const todayStr = now.toISOString().substring(0, 10);
+        const todayStr = toISODate(now);
         html = `<input type="date" id="rpt-week-picker" value="${todayStr}" onchange="renderReports()">`;
       } else if (period === 'monthly') {
         html = `<select id="rpt-month-picker" onchange="renderReports()">`;
@@ -1322,18 +1452,34 @@
         }
         html += `</select>`;
         html += `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 80px;" onchange="renderReports()">`;
-      } else if (period === 'quarterly' || period === 'semiannual') {
-        html = `<span style="font-size:0.85rem; font-weight:600;">${currentLang === 'es' ? 'Meses:' : 'Months:'}</span>`;
-        html += `<select id="rpt-start-month" onchange="renderReports()">`;
-        for (let i = 0; i < 12; i++) {
-          html += `<option value="${i}" ${i === 0 ? 'selected' : ''}>${monthNames[i]}</option>`;
+      } else if (period === 'quarterly') {
+        // Corrección Fase 2 (#1): el trimestre debe ser exactamente uno de los 4 trimestres
+        // calendario (Ene-Mar, Abr-Jun, Jul-Sep, Oct-Dic). Se reemplazan los dos selectores
+        // libres de mes-inicio/mes-fin por un único selector que solo permite esas 4 opciones,
+        // de modo que una combinación inválida (p. ej. Ene-Feb) deja de ser posible.
+        const quarterLabels = currentLang === 'es'
+          ? ['T1 (Ene-Mar)', 'T2 (Abr-Jun)', 'T3 (Jul-Sep)', 'T4 (Oct-Dic)']
+          : ['Q1 (Jan-Mar)', 'Q2 (Apr-Jun)', 'Q3 (Jul-Sep)', 'Q4 (Oct-Dec)'];
+        const currentQuarter = Math.floor(currentMonth / 3);
+        html = `<span style="font-size:0.85rem; font-weight:600;">${currentLang === 'es' ? 'Trimestre:' : 'Quarter:'}</span>`;
+        html += `<select id="rpt-quarter-picker" onchange="renderReports()">`;
+        for (let q = 0; q < 4; q++) {
+          html += `<option value="${q}" ${q === currentQuarter ? 'selected' : ''}>${quarterLabels[q]}</option>`;
         }
         html += `</select>`;
-        html += `<span>-</span>`;
-        html += `<select id="rpt-end-month" onchange="renderReports()">`;
-        for (let i = 0; i < 12; i++) {
-          let defaultEnd = period === 'quarterly' ? 2 : 5;
-          html += `<option value="${i}" ${i === defaultEnd ? 'selected' : ''}>${monthNames[i]}</option>`;
+        html += `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 80px;" onchange="renderReports()">`;
+      } else if (period === 'semiannual') {
+        // Corrección Fase 2 (#1): el semestre debe ser exactamente uno de los 2 semestres
+        // calendario (Ene-Jun, Jul-Dic). Mismo criterio que en trimestral: un único selector
+        // restringido a esas 2 opciones, eliminando la posibilidad de un rango inválido.
+        const halfLabels = currentLang === 'es'
+          ? ['S1 (Ene-Jun)', 'S2 (Jul-Dic)']
+          : ['H1 (Jan-Jun)', 'H2 (Jul-Dec)'];
+        const currentHalf = currentMonth < 6 ? 0 : 1;
+        html = `<span style="font-size:0.85rem; font-weight:600;">${currentLang === 'es' ? 'Semestre:' : 'Half-year:'}</span>`;
+        html += `<select id="rpt-half-picker" onchange="renderReports()">`;
+        for (let h = 0; h < 2; h++) {
+          html += `<option value="${h}" ${h === currentHalf ? 'selected' : ''}>${halfLabels[h]}</option>`;
         }
         html += `</select>`;
         html += `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 80px;" onchange="renderReports()">`;
@@ -1345,55 +1491,127 @@
       renderReports();
     }
 
-    // --- FILTRADO AVANZADO POR PERÍODO ESPECÍFICO ---
+    // --- UTILIDADES DE FECHA COMPARTIDAS (Corrección Fase 1, defecto #1) ---
+    // Formatea una fecha local como cadena ISO (YYYY-MM-DD) sin desplazamientos de huso horario,
+    // ya que se construye a partir de componentes locales (año/mes/día), nunca parseando UTC.
+    function toISODate(d) {
+      const yy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yy}-${mm}-${dd}`;
+    }
+
+    // Calcula el rango [inicio, fin] (cadenas ISO) de un período contable calendario a partir
+    // de una fecha de referencia (y, m 0-indexado, d). Única fuente de la lógica de límites de
+    // fecha para Diario/Semanal/Mensual/Trimestral/Semestral/Anual, evitando cálculos duplicados
+    // o inconsistentes entre Reportes y Presupuesto.
+    function computeRangeFromYMD(period, y, m, d) {
+      switch (period) {
+        case 'daily': {
+          const iso = toISODate(new Date(y, m, d));
+          return { start: iso, end: iso };
+        }
+        case 'weekly': {
+          // Semana real de 7 días (lunes a domingo) que contiene la fecha de referencia.
+          // Corrección Fase 1: ya no se usa Math.abs() ni una ventana de ±7 días.
+          const ref = new Date(y, m, d);
+          const dow = ref.getDay(); // 0=Domingo ... 6=Sábado
+          const mondayOffset = dow === 0 ? -6 : 1 - dow;
+          const monday = new Date(y, m, d + mondayOffset);
+          const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
+          return { start: toISODate(monday), end: toISODate(sunday) };
+        }
+        case 'monthly':
+          return { start: toISODate(new Date(y, m, 1)), end: toISODate(new Date(y, m + 1, 0)) };
+        case 'quarterly': {
+          const q = Math.floor(m / 3);
+          return { start: toISODate(new Date(y, q * 3, 1)), end: toISODate(new Date(y, q * 3 + 3, 0)) };
+        }
+        case 'semiannual': {
+          const h = m < 6 ? 0 : 6;
+          return { start: toISODate(new Date(y, h, 1)), end: toISODate(new Date(y, h + 6, 0)) };
+        }
+        case 'annual':
+          return { start: toISODate(new Date(y, 0, 1)), end: toISODate(new Date(y, 11, 31)) };
+        default:
+          return null;
+      }
+    }
+
+    // Traduce los selectores existentes de la pestaña Reportes (fecha/mes/año/mes-inicio/mes-fin)
+    // al rango de fechas correspondiente. Devuelve null si el período o los selectores son
+    // inválidos o están incompletos (en vez de incluir todo el histórico silenciosamente).
+    function getPeriodDateRange(period) {
+      switch (period) {
+        case 'daily': {
+          const picker = document.getElementById('rpt-date-picker');
+          if (!picker || !picker.value) return null;
+          const parts = picker.value.split('-').map(Number);
+          if (parts.length !== 3 || parts.some(isNaN)) return null;
+          return computeRangeFromYMD('daily', parts[0], parts[1] - 1, parts[2]);
+        }
+        case 'weekly': {
+          const picker = document.getElementById('rpt-week-picker');
+          if (!picker || !picker.value) return null;
+          const parts = picker.value.split('-').map(Number);
+          if (parts.length !== 3 || parts.some(isNaN)) return null;
+          return computeRangeFromYMD('weekly', parts[0], parts[1] - 1, parts[2]);
+        }
+        case 'monthly': {
+          const monthElem = document.getElementById('rpt-month-picker');
+          const yearElem = document.getElementById('rpt-year-picker');
+          if (!monthElem || !yearElem || monthElem.value === '' || yearElem.value === '') return null;
+          const m = parseInt(monthElem.value, 10);
+          const y = parseInt(yearElem.value, 10);
+          if (isNaN(m) || isNaN(y) || m < 0 || m > 11) return null;
+          return computeRangeFromYMD('monthly', y, m, 1);
+        }
+        case 'quarterly': {
+          // Corrección Fase 2 (#1): ya no hay mes-inicio/mes-fin libres que validar o corregir;
+          // el selector único (rpt-quarter-picker) solo puede valer 0-3, uno de los 4 trimestres
+          // calendario exactos. computeRangeFromYMD ya calcula el trimestre calendario correcto
+          // a partir del mes (Math.floor(m/3)), por lo que pasamos el primer mes de ese trimestre.
+          const qElem = document.getElementById('rpt-quarter-picker');
+          const yearElem = document.getElementById('rpt-year-picker');
+          if (!qElem || !yearElem || qElem.value === '' || yearElem.value === '') return null;
+          const q = parseInt(qElem.value, 10);
+          const y = parseInt(yearElem.value, 10);
+          if (isNaN(q) || q < 0 || q > 3 || isNaN(y)) return null;
+          return computeRangeFromYMD('quarterly', y, q * 3, 1);
+        }
+        case 'semiannual': {
+          // Corrección Fase 2 (#1): análogo al caso trimestral, restringido a los 2 semestres
+          // calendario exactos (0 = Ene-Jun, 1 = Jul-Dic).
+          const hElem = document.getElementById('rpt-half-picker');
+          const yearElem = document.getElementById('rpt-year-picker');
+          if (!hElem || !yearElem || hElem.value === '' || yearElem.value === '') return null;
+          const h = parseInt(hElem.value, 10);
+          const y = parseInt(yearElem.value, 10);
+          if (isNaN(h) || h < 0 || h > 1 || isNaN(y)) return null;
+          return computeRangeFromYMD('semiannual', y, h * 6, 1);
+        }
+        case 'annual': {
+          const yearElem = document.getElementById('rpt-year-picker');
+          if (!yearElem || yearElem.value === '') return null;
+          const y = parseInt(yearElem.value, 10);
+          if (isNaN(y)) return null;
+          return computeRangeFromYMD('annual', y, 0, 1);
+        }
+        default:
+          return null;
+      }
+    }
+
+    // --- FILTRADO POR PERÍODO ESPECÍFICO (Corrección Fase 1, defecto #1) ---
+    // Semanal ahora representa un período real de 7 días (no una ventana de ±7 días con Math.abs).
+    // Los selectores inválidos o incompletos ya no incluyen todo el histórico silenciosamente.
     function filterEntriesByPeriod(entries, period) {
       if (period === 'all') return entries;
-      
-      return entries.filter(e => {
-        if (!e.date) return true;
-        const entryDate = new Date(e.date + 'T00:00:00');
-        
-        switch (period) {
-          case 'daily': {
-            const picker = document.getElementById('rpt-date-picker');
-            if (!picker || !picker.value) return true;
-            return e.date === picker.value;
-          }
-          case 'weekly': {
-            const picker = document.getElementById('rpt-week-picker');
-            if (!picker || !picker.value) return true;
-            const targetDate = new Date(picker.value + 'T00:00:00');
-            const diffTime = Math.abs(entryDate - targetDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays <= 7;
-          }
-          case 'monthly': {
-            const monthElem = document.getElementById('rpt-month-picker');
-            const yearElem = document.getElementById('rpt-year-picker');
-            if (!monthElem || !yearElem) return true;
-            return entryDate.getMonth() === parseInt(monthElem.value) && entryDate.getFullYear() === parseInt(yearElem.value);
-          }
-          case 'quarterly':
-          case 'semiannual': {
-            const startElem = document.getElementById('rpt-start-month');
-            const endElem = document.getElementById('rpt-end-month');
-            const yearElem = document.getElementById('rpt-year-picker');
-            if (!startElem || !endElem || !yearElem) return true;
-            const startM = parseInt(startElem.value);
-            const endM = parseInt(endElem.value);
-            const year = parseInt(yearElem.value);
-            const m = entryDate.getMonth();
-            return entryDate.getFullYear() === year && m >= startM && m <= endM;
-          }
-          case 'annual': {
-            const yearElem = document.getElementById('rpt-year-picker');
-            if (!yearElem) return true;
-            return entryDate.getFullYear() === parseInt(yearElem.value);
-          }
-          default:
-            return true;
-        }
-      });
+
+      const range = getPeriodDateRange(period);
+      if (!range) return [];
+
+      return entries.filter(e => e.date && e.date >= range.start && e.date <= range.end);
     }
 
     // --- REPORTES FINANCIEROS ---
@@ -1402,52 +1620,99 @@
       const selectedPeriod = periodSelect ? periodSelect.value : 'monthly';
       const t = translations[currentLang];
 
-      const filteredEntries = filterEntriesByPeriod(journalEntries, selectedPeriod);
+      // Corrección Fase 1 (#9): no combinar valores de períodos incompatibles.
+      // El Estado de Resultados mide un FLUJO (solo los movimientos del período seleccionado).
+      const periodEntries = filterEntriesByPeriod(journalEntries, selectedPeriod);
 
-      const balances = {};
-      accounts.forEach(a => balances[a.id] = 0);
+      // El Balance General es una FOTOGRAFÍA a una fecha (saldo acumulado desde el origen hasta
+      // el cierre del período seleccionado), no solo los movimientos ocurridos durante el período.
+      let cumulativeEntries;
+      if (selectedPeriod === 'all') {
+        cumulativeEntries = journalEntries;
+      } else {
+        const range = getPeriodDateRange(selectedPeriod);
+        cumulativeEntries = range ? journalEntries.filter(e => e.date && e.date <= range.end) : [];
+      }
 
-      initialBalances.forEach(b => {
-        const acc = accounts.find(a => a.id === b.accId);
-        if (!acc) return;
-        balances[b.accId] += b.amount;
-      });
-
-      filteredEntries.forEach(entry => {
-        entry.lines.forEach(line => {
-          const acc = accounts.find(a => a.id === line.accId);
+      function computeAccountBalances(entriesForCalc) {
+        const bal = {};
+        accounts.forEach(a => bal[a.id] = 0);
+        // Corrección Fase 2 (#2): verificado contra la convención ya usada en renderTAccounts()
+        // (líneas ~1292-1296) y en el bucle de líneas de asiento de abajo: un balance inicial
+        // siempre se suma al lado NATURAL de la cuenta (deudor para Activo/Gasto, acreedor para
+        // Pasivo/Patrimonio/Ingreso). Bajo esa convención, sumar el monto positivo tal cual
+        // (bal += amount) es matemáticamente correcto para los 5 tipos de cuenta — no hacía
+        // falta invertir el signo en ningún caso.
+        // Lo que SÍ estaba mal: las cuentas TEMPORALES (Ingreso/Gasto) son cuentas de flujo, no
+        // de saldo acumulado, por lo que no corresponde arrastrarles un "saldo inicial" hacia el
+        // Estado de Resultados de cada período (antes se sumaba igual para las 5, inflando
+        // Ingreso/Gasto en TODOS los períodos). Ahora el balance inicial solo se incorpora para
+        // cuentas PERMANENTES (Activo/Pasivo/Patrimonio), que es donde un saldo inicial tiene
+        // sentido contable.
+        initialBalances.forEach(b => {
+          const acc = accounts.find(a => a.id === b.accId);
           if (!acc) return;
-          if (acc.type === 'Asset' || acc.type === 'Expense') {
-            balances[line.accId] += (line.type === 'debit' ? line.amount : -line.amount);
-          } else {
-            balances[line.accId] += (line.type === 'credit' ? line.amount : -line.amount);
+          if (acc.type === 'Asset' || acc.type === 'Liability' || acc.type === 'Equity') {
+            bal[b.accId] += b.amount;
           }
         });
-      });
+        entriesForCalc.forEach(entry => {
+          entry.lines.forEach(line => {
+            const acc = accounts.find(a => a.id === line.accId);
+            if (!acc) return;
+            if (acc.type === 'Asset' || acc.type === 'Expense') {
+              bal[line.accId] += (line.type === 'debit' ? line.amount : -line.amount);
+            } else {
+              bal[line.accId] += (line.type === 'credit' ? line.amount : -line.amount);
+            }
+          });
+        });
+        return bal;
+      }
+
+      const incomeBalances = computeAccountBalances(periodEntries);
+      const balanceSheetBalances = computeAccountBalances(cumulativeEntries);
 
       // 1. Estado de Resultados
+      // Corrección Fase 1 (#8): ya no se exige balances > 0 (lo que ocultaba saldos negativos
+      // válidos); ahora se incluye cualquier saldo distinto de cero, respetando el signo ya
+      // calculado según el tipo de cuenta (débito o crédito).
       let totalRevenue = 0;
       let totalExpense = 0;
       let incomeHtml = '<table style="width:100%;">';
 
-      accounts.filter(a => a.type === 'Revenue' && (balances[a.id] || 0) > 0).forEach(a => {
-        const val = balances[a.id] || 0;
+      accounts.filter(a => a.type === 'Revenue' && Math.abs(incomeBalances[a.id] || 0) > 0.001).forEach(a => {
+        const val = incomeBalances[a.id] || 0;
         totalRevenue += val;
         incomeHtml += `<tr><td>${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
       });
       incomeHtml += `<tr style="font-weight:bold; background:#f1f5f9;"><td>${t.rpt_total_revenue}</td><td class="text-right">${formatCurrency(totalRevenue)}</td></tr>`;
 
-      accounts.filter(a => a.type === 'Expense' && (balances[a.id] || 0) > 0).forEach(a => {
-        const val = balances[a.id] || 0;
+      accounts.filter(a => a.type === 'Expense' && Math.abs(incomeBalances[a.id] || 0) > 0.001).forEach(a => {
+        const val = incomeBalances[a.id] || 0;
         totalExpense += val;
         incomeHtml += `<tr><td>${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
       });
       incomeHtml += `<tr style="font-weight:bold; background:#f1f5f9;"><td>${t.rpt_total_expense}</td><td class="text-right">${formatCurrency(totalExpense)}</td></tr>`;
 
-      const netIncome = totalRevenue - totalExpense;
+      const netIncome = totalRevenue - totalExpense; // Resultado del PERÍODO seleccionado (solo para el Estado de Resultados)
       incomeHtml += `<tr style="font-weight:bold; font-size:1rem; background:#e2e8f0;"><td>${t.rpt_net_income}</td><td class="text-right" style="color:${netIncome>=0?'var(--success)':'var(--danger)'}">${formatCurrency(netIncome)}</td></tr></table>`;
 
       document.getElementById('income-statement-body').innerHTML = incomeHtml;
+
+      // Corrección Fase 3 (bug crítico): el Balance General es una fotografía ACUMULADA hasta la
+      // fecha de cierre del período, no solo el resultado del período seleccionado. Antes se sumaba
+      // `netIncome` (que solo mide el período elegido, p. ej. marzo) directamente al Patrimonio,
+      // omitiendo el resultado de los períodos anteriores (p. ej. enero + febrero). La corrección
+      // calcula el resultado ACUMULADO (Ingresos - Gastos) a partir de `balanceSheetBalances`, que
+      // ya se construye con `cumulativeEntries` (todos los asientos hasta el cierre del período,
+      // ver más arriba) — es decir, se reutiliza el mismo dato ya calculado, sin tocar
+      // computeAccountBalances() ni el cálculo de periodEntries/cumulativeEntries.
+      let cumulativeRevenue = 0;
+      let cumulativeExpense = 0;
+      accounts.filter(a => a.type === 'Revenue').forEach(a => { cumulativeRevenue += balanceSheetBalances[a.id] || 0; });
+      accounts.filter(a => a.type === 'Expense').forEach(a => { cumulativeExpense += balanceSheetBalances[a.id] || 0; });
+      const cumulativeNetIncome = cumulativeRevenue - cumulativeExpense;
 
       // 2. Balance General
       let totalAsset = 0;
@@ -1457,8 +1722,8 @@
 
       // ACTIVOS
       balanceHtml += `<tr><td colspan="2"><strong>${t.rpt_assets}</strong></td></tr>`;
-      accounts.filter(a => a.type === 'Asset' && (balances[a.id] || 0) > 0).forEach(a => {
-        const val = balances[a.id] || 0;
+      accounts.filter(a => a.type === 'Asset' && Math.abs(balanceSheetBalances[a.id] || 0) > 0.001).forEach(a => {
+        const val = balanceSheetBalances[a.id] || 0;
         totalAsset += val;
         balanceHtml += `<tr><td style="padding-left:12px;">${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
       });
@@ -1466,8 +1731,8 @@
 
       // PASIVOS
       balanceHtml += `<tr><td colspan="2" style="padding-top:10px;"><strong>${t.rpt_liabilities}</strong></td></tr>`;
-      accounts.filter(a => a.type === 'Liability' && (balances[a.id] || 0) > 0).forEach(a => {
-        const val = balances[a.id] || 0;
+      accounts.filter(a => a.type === 'Liability' && Math.abs(balanceSheetBalances[a.id] || 0) > 0.001).forEach(a => {
+        const val = balanceSheetBalances[a.id] || 0;
         totalLiability += val;
         balanceHtml += `<tr><td style="padding-left:12px;">${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
       });
@@ -1475,16 +1740,16 @@
 
       // PATRIMONIO NETO
       balanceHtml += `<tr><td colspan="2" style="padding-top:10px;"><strong>${t.rpt_equity}</strong></td></tr>`;
-      accounts.filter(a => a.type === 'Equity' && (balances[a.id] || 0) > 0).forEach(a => {
-        const val = balances[a.id] || 0;
+      accounts.filter(a => a.type === 'Equity' && Math.abs(balanceSheetBalances[a.id] || 0) > 0.001).forEach(a => {
+        const val = balanceSheetBalances[a.id] || 0;
         totalEquity += val;
         balanceHtml += `<tr><td style="padding-left:12px;">${getAccName(a)}</td><td class="text-right">${formatCurrency(val)}</td></tr>`;
       });
       
-      if (netIncome !== 0) {
-        balanceHtml += `<tr><td style="padding-left:12px;">${t.rpt_net_period_income}</td><td class="text-right">${formatCurrency(netIncome)}</td></tr>`;
+      if (cumulativeNetIncome !== 0) {
+        balanceHtml += `<tr><td style="padding-left:12px;">${t.rpt_net_period_income}</td><td class="text-right">${formatCurrency(cumulativeNetIncome)}</td></tr>`;
       }
-      totalEquity += netIncome;
+      totalEquity += cumulativeNetIncome;
       balanceHtml += `<tr style="font-weight:600; background:#f8fafc; border-top: 1px solid var(--border);"><td style="padding-left:12px;"><em>${t.rpt_subtotal_equity}</em></td><td class="text-right"><em>${formatCurrency(totalEquity)}</em></td></tr>`;
 
       const totalPasivoPatrimonio = totalLiability + totalEquity;
@@ -1513,14 +1778,21 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `FamilyFinance_Backup_${new Date().toISOString().substring(0,10)}.json`;
+      // Corrección Fase 2 (#3): usar toISODate (fecha local) en vez de toISOString() (UTC)
+      // para nombrar el archivo, evitando que la fecha del respaldo se corra un día según
+      // la zona horaria del usuario.
+      a.download = `FamilyFinance_Backup_${toISODate(new Date())}.json`;
       a.click();
       URL.revokeObjectURL(url);
     }
 
     // --- INICIALIZACIÓN ---
     document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById('entry-date').value = new Date().toISOString().substring(0, 10);
+      // Corrección Fase 2 (#3): usar toISODate (fecha local) en vez de toISOString() (UTC)
+      // para la fecha por defecto del asiento, evitando el corrimiento de día por huso horario.
+      document.getElementById('entry-date').value = toISODate(new Date());
+      const budgetRefDateEl = document.getElementById('budget-ref-date');
+      if (budgetRefDateEl) budgetRefDateEl.value = toISODate(new Date());
       updateDOM();
     });
   </script>
