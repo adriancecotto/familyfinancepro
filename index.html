@@ -232,9 +232,9 @@
   <nav>
     <button class="nav-btn active" onclick="switchTab('accounts', this)" data-i18n="tab_accounts">Plan de Cuentas</button>
     <button class="nav-btn" onclick="switchTab('initial', this)" data-i18n="tab_initial">Balance Inicial</button>
+    <button class="nav-btn" onclick="switchTab('budget', this)" data-i18n="tab_budget">Presupuesto</button>
     <button class="nav-btn" onclick="switchTab('journal', this)" data-i18n="tab_journal">Libro Diario</button>
     <button class="nav-btn" onclick="switchTab('t-accounts', this)" data-i18n="tab_taccounts">Cuentas T</button>
-    <button class="nav-btn" onclick="switchTab('budget', this)" data-i18n="tab_budget">Presupuesto</button>
     <button class="nav-btn" onclick="switchTab('reports', this)" data-i18n="tab_reports">Reportes</button>
     <button class="nav-btn" onclick="switchTab('concepts', this)" data-i18n="tab_concepts">Conceptos</button>
   </nav>
@@ -309,6 +309,49 @@
       </div>
     </section>
 
+    <!-- TAB: PRESUPUESTO -->
+    <section id="tab-budget" class="tab-content">
+      <div class="card">
+        <div class="card-header-flex">
+          <h2 data-i18n="budget_title">Control Presupuestario</h2>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="budget-period" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_period">Período:</label>
+            <select id="budget-period" onchange="renderBudgetTable()">
+              <option value="daily" data-i18n="per_daily">Diario</option>
+              <option value="weekly" data-i18n="per_weekly">Semanal</option>
+              <option value="monthly" selected data-i18n="per_monthly">Mensual</option>
+              <option value="quarterly" data-i18n="per_quarterly">Trimestral</option>
+              <option value="semiannual" data-i18n="per_semiannual">Semestral</option>
+              <option value="annual" data-i18n="per_annual">Anual</option>
+            </select>
+            <label for="budget-ref-date" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_ref_date">Fecha de referencia:</label>
+            <input type="date" id="budget-ref-date" onchange="renderBudgetTable()">
+          </div>
+        </div>
+
+        <div class="account-form-grid">
+          <select id="budget-acc-select" style="flex: 1; min-width: 220px;"></select>
+          <input type="text" id="budget-amount" placeholder="Monto Presupuestado" data-i18n-ph="ph_budget_amount" oninput="formatInputCurrency(this)">
+          <button class="btn-primary" onclick="setBudgetAccount()" data-i18n="btn_set_budget">Asignar Presupuesto</button>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th data-i18n="col_account">Cuenta</th>
+                <th class="text-right" data-i18n="col_budgeted">Presupuestado</th>
+                <th class="text-right" data-i18n="col_actual">Ejecutado Real</th>
+                <th class="text-right" data-i18n="col_variance">Variación</th>
+                <th class="text-center" style="width: 100px;" data-i18n="col_actions">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="budget-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- TAB: LIBRO DIARIO -->
     <section id="tab-journal" class="tab-content">
       <div class="card">
@@ -362,49 +405,6 @@
       <div class="card">
         <h2 data-i18n="t_accounts_title">Libro Mayor (Cuentas T)</h2>
         <div class="t-grid" id="t-accounts-container"></div>
-      </div>
-    </section>
-
-    <!-- TAB: PRESUPUESTO -->
-    <section id="tab-budget" class="tab-content">
-      <div class="card">
-        <div class="card-header-flex">
-          <h2 data-i18n="budget_title">Control Presupuestario</h2>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <label for="budget-period" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_period">Período:</label>
-            <select id="budget-period" onchange="renderBudgetTable()">
-              <option value="daily" data-i18n="per_daily">Diario</option>
-              <option value="weekly" data-i18n="per_weekly">Semanal</option>
-              <option value="monthly" selected data-i18n="per_monthly">Mensual</option>
-              <option value="quarterly" data-i18n="per_quarterly">Trimestral</option>
-              <option value="semiannual" data-i18n="per_semiannual">Semestral</option>
-              <option value="annual" data-i18n="per_annual">Anual</option>
-            </select>
-            <label for="budget-ref-date" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_ref_date">Fecha de referencia:</label>
-            <input type="date" id="budget-ref-date" onchange="renderBudgetTable()">
-          </div>
-        </div>
-
-        <div class="account-form-grid">
-          <select id="budget-acc-select" style="flex: 1; min-width: 220px;"></select>
-          <input type="text" id="budget-amount" placeholder="Monto Presupuestado" data-i18n-ph="ph_budget_amount" oninput="formatInputCurrency(this)">
-          <button class="btn-primary" onclick="setBudgetAccount()" data-i18n="btn_set_budget">Asignar Presupuesto</button>
-        </div>
-
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th data-i18n="col_account">Cuenta</th>
-                <th class="text-right" data-i18n="col_budgeted">Presupuestado</th>
-                <th class="text-right" data-i18n="col_actual">Ejecutado Real</th>
-                <th class="text-right" data-i18n="col_variance">Variación</th>
-                <th class="text-center" style="width: 100px;" data-i18n="col_actions">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="budget-table-body"></tbody>
-          </table>
-        </div>
       </div>
     </section>
 
@@ -554,7 +554,7 @@
   <footer>
     <div class="footer-container">
       <div class="footer-line-1">Family Finance System - Diseñado para uso educativo y familiar</div>
-      <div class="footer-line-2">Adrián R. Cecotto 2026 - Todos los derechos reservados</div>
+      <div class="footer-line-2">© 2026 Adrián Cecotto - Todos los derechos reservados</div>
     </div>
   </footer>
 
@@ -602,9 +602,9 @@
         btn_export: "Descargar",
         tab_accounts: "Plan de Cuentas",
         tab_initial: "Balance Inicial",
+        tab_budget: "Presupuesto",
         tab_journal: "Libro Diario",
         tab_taccounts: "Cuentas T",
-        tab_budget: "Presupuesto",
         tab_reports: "Reportes",
         tab_concepts: "Conceptos",
         add_account: "Agregar Nueva Cuenta",
@@ -727,9 +727,9 @@
         btn_export: "Download",
         tab_accounts: "Chart of Accounts",
         tab_initial: "Initial Balance",
+        tab_budget: "Budget Control",
         tab_journal: "General Journal",
         tab_taccounts: "T-Accounts",
-        tab_budget: "Budget Control",
         tab_reports: "Financial Reports",
         tab_concepts: "Concepts",
         add_account: "Add New Account",
