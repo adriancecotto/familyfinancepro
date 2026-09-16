@@ -427,6 +427,14 @@
 
             <!-- Selector dinámico específico según el período elegido -->
             <div id="report-subselectors" style="display: inline-flex; gap: 6px; align-items: center;"></div>
+
+            <!-- Nuevo selector: Base del Reporte (Actividad del Período vs. Acumulado hasta la fecha de cierre).
+                 Afecta únicamente al Estado de Resultados; el Balance General siempre es acumulado. -->
+            <label for="report-basis" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_report_basis">Base del Reporte:</label>
+            <select id="report-basis" onchange="renderReports()">
+              <option value="period" selected data-i18n="basis_period">Actividad del Período</option>
+              <option value="cumulative" data-i18n="basis_cumulative">Acumulado hasta la Fecha de Cierre</option>
+            </select>
           </div>
         </div>
 
@@ -632,6 +640,9 @@
         budget_title: "Control Presupuestario",
         lbl_period: "Período:",
         lbl_ref_date: "Fecha de referencia:",
+        lbl_report_basis: "Base del Reporte:",
+        basis_period: "Actividad del Período",
+        basis_cumulative: "Acumulado hasta la Fecha de Cierre",
         per_daily: "Diario",
         per_weekly: "Semanal",
         per_monthly: "Mensual",
@@ -754,6 +765,9 @@
         budget_title: "Budget Control",
         lbl_period: "Period:",
         lbl_ref_date: "Reference date:",
+        lbl_report_basis: "Report Basis:",
+        basis_period: "Period Activity",
+        basis_cumulative: "Cumulative Through End Date",
         per_daily: "Daily",
         per_weekly: "Weekly",
         per_monthly: "Monthly",
@@ -1614,25 +1628,43 @@
       return entries.filter(e => e.date && e.date >= range.start && e.date <= range.end);
     }
 
+    // Helper centralizado (Mejora: selector "Base del Reporte"): obtiene el conjunto de asientos
+    // a usar según la BASE elegida para el reporte:
+    //   - 'period'     -> solo los movimientos del período seleccionado (comportamiento por
+    //                      defecto/histórico, sin cambios; reutiliza filterEntriesByPeriod()).
+    //   - 'cumulative' -> todos los movimientos desde el origen hasta el CIERRE del período
+    //                      seleccionado (nunca desde su fecha de inicio).
+    // No duplica lógica de filtrado: reutiliza filterEntriesByPeriod()/getPeriodDateRange() ya
+    // existentes. La usan tanto el Estado de Resultados (según el selector) como el Balance
+    // General (que SIEMPRE pasa 'cumulative', sin importar el selector).
+    function getReportEntriesByBasis(period, basis) {
+      if (basis === 'cumulative') {
+        if (period === 'all') return journalEntries;
+        const range = getPeriodDateRange(period);
+        return range ? journalEntries.filter(e => e.date && e.date <= range.end) : [];
+      }
+      return filterEntriesByPeriod(journalEntries, period);
+    }
+
     // --- REPORTES FINANCIEROS ---
     function renderReports() {
       const periodSelect = document.getElementById('report-period');
       const selectedPeriod = periodSelect ? periodSelect.value : 'monthly';
+      const basisSelect = document.getElementById('report-basis');
+      const reportBasis = basisSelect ? basisSelect.value : 'period'; // 'period' = comportamiento por defecto/original
       const t = translations[currentLang];
 
-      // Corrección Fase 1 (#9): no combinar valores de períodos incompatibles.
-      // El Estado de Resultados mide un FLUJO (solo los movimientos del período seleccionado).
-      const periodEntries = filterEntriesByPeriod(journalEntries, selectedPeriod);
+      // Mejora: el Estado de Resultados usa la BASE elegida por el usuario.
+      //   - 'period' (por defecto): solo los movimientos del período seleccionado (idéntico al
+      //     comportamiento anterior a este cambio — Corrección Fase 1 #9 preservada).
+      //   - 'cumulative': todos los movimientos desde el origen hasta el cierre del período.
+      const periodEntries = getReportEntriesByBasis(selectedPeriod, reportBasis);
 
       // El Balance General es una FOTOGRAFÍA a una fecha (saldo acumulado desde el origen hasta
       // el cierre del período seleccionado), no solo los movimientos ocurridos durante el período.
-      let cumulativeEntries;
-      if (selectedPeriod === 'all') {
-        cumulativeEntries = journalEntries;
-      } else {
-        const range = getPeriodDateRange(selectedPeriod);
-        cumulativeEntries = range ? journalEntries.filter(e => e.date && e.date <= range.end) : [];
-      }
+      // SIEMPRE es acumulado, sin importar el selector "Base del Reporte" (requisito explícito:
+      // el selector no debe afectar al Balance General).
+      const cumulativeEntries = getReportEntriesByBasis(selectedPeriod, 'cumulative');
 
       function computeAccountBalances(entriesForCalc) {
         const bal = {};
