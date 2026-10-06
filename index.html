@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- Medidas de Seguridad HTTP & CSP contra hacking / XSS -->
+  <!-- Security HTTP & CSP -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: https:;">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
   
   <title>Family Finance Pro</title>
 
-  <!-- FontAwesome con Subresource Integrity (SRI) -->
+  <!-- FontAwesome -->
   <link 
     rel="stylesheet" 
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
@@ -27,6 +27,7 @@
       --accent: #2563eb;
       --danger: #dc2626;
       --success: #16a34a;
+      --warning: #d97706;
       --whatsapp: #25D366;
       --whatsapp-hover: #1DA851;
       --bg: #f8fafc;
@@ -47,7 +48,6 @@
 
     .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 
-    /* Switcher Idioma & Acciones */
     .btn-top {
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.25);
@@ -115,6 +115,33 @@
     .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px; }
     .card h2 { font-size: 1.2rem; color: var(--primary); }
 
+    /* Workshop Banner */
+    .workshop-bar {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .workshop-title { font-weight: 700; color: #1e40af; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+    .workshop-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .case-indicator {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
     /* Inputs & Form Elements */
     input, select, button { padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; outline: none; font-size: 0.88rem; }
     input:focus, select:focus { border-color: var(--accent); }
@@ -123,8 +150,10 @@
     button.btn-primary:hover { opacity: 0.9; }
     button.btn-secondary { background: white; color: var(--accent); border: 1px solid var(--accent); cursor: pointer; font-weight: 600; }
     button.btn-secondary:hover { background: #eff6ff; }
-    button.btn-danger { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; cursor: pointer; }
+    button.btn-danger { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; cursor: pointer; font-weight: 600; }
     button.btn-danger:hover { background: #fca5a5; }
+    button.btn-workshop { background: #1e40af; color: white; border: none; cursor: pointer; font-weight: 600; }
+    button.btn-workshop:hover { background: #1e3a8a; }
 
     .account-form-grid { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 1rem; }
 
@@ -136,7 +165,7 @@
     .text-right { text-align: right; }
     .text-center { text-align: center; }
 
-    /* Cuentas T más amplias (menos por renglón) */
+    /* T-Accounts */
     .t-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1.25rem; }
     .t-account-card {
       background: white;
@@ -152,13 +181,12 @@
     .t-column:first-child { border-right: 1px solid var(--border); }
     .t-column-header { text-align: center; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 6px; }
     
-    /* Disposición flexible de la línea en cuenta T para evitar desfasaje de decimales */
     .t-entry { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; word-break: break-word; }
     .t-entry span { flex: 1; }
     .t-entry strong { white-space: nowrap; text-align: right; }
     .t-balance { padding: 8px 12px; font-size: 0.88rem; background: #f8fafc; border-top: 1px solid var(--border); text-align: right; }
 
-    /* Modales */
+    /* Modals */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(15, 23, 42, 0.6);
@@ -173,12 +201,27 @@
     }
     .modal-close { position: absolute; right: 15px; top: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted); }
 
-    /* Ejemplo Libro Diario dentro del Modal */
     .example-box { background: #f8fafc; border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-top: 10px; }
     .journal-example-table { width: 100%; font-size: 0.82rem; margin-top: 6px; border: 1px solid var(--border); }
     .journal-example-table td, .journal-example-table th { padding: 5px 8px; }
 
-    /* Footer Ajustado */
+    /* Decision Lab */
+    .decision-lab {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .decision-lab h3 { color: #166534; font-size: 1.1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px; }
+    .decision-list { list-style: none; margin-bottom: 1rem; }
+    .decision-list li { font-size: 0.9rem; padding: 4px 0; color: #14532d; display: flex; align-items: flex-start; gap: 8px; }
+    .decision-questions { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 1rem; margin-top: 1rem; }
+    .decision-questions h4 { font-size: 0.95rem; color: var(--primary); margin-bottom: 0.5rem; }
+    .decision-questions ul { padding-left: 1.2rem; font-size: 0.88rem; color: var(--text); }
+    .decision-questions li { margin-bottom: 0.4rem; }
+
+    /* Footer */
     footer {
       background: var(--primary);
       color: #94a3b8;
@@ -197,14 +240,12 @@
     .footer-line-1 { font-weight: 500; color: #cbd5e1; }
     .footer-line-2 { color: #94a3b8; }
 
-    /* Estilos Pestaña Conceptos */
     .concepts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
     .concept-card { border: 1px solid var(--border); border-radius: 6px; padding: 1rem; background: #fff; }
     .concept-card h3 { font-size: 1.05rem; color: var(--accent); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
 
-    /* Print Styles */
     @media print {
-      header, nav, .header-actions, .btn-whatsapp-float, button, .account-form-grid, .journal-lines-actions { display: none !important; }
+      header, nav, .header-actions, .btn-whatsapp-float, button, .account-form-grid, .journal-lines-actions, .workshop-bar { display: none !important; }
       body { background: white; color: black; }
       .card { border: none; box-shadow: none; padding: 0; }
       main { max-width: 100%; margin: 0; padding: 0; }
@@ -241,6 +282,20 @@
 
   <!-- Main Content -->
   <main>
+
+    <!-- WORKSHOP EXAMPLES BAR -->
+    <div class="workshop-bar">
+      <div class="workshop-title">
+        <i class="fas fa-graduation-cap"></i>
+        <span data-i18n="workshop_title">Ejemplos del Taller / Workshop Examples</span>
+        <span id="loaded-case-badge" class="case-indicator" style="display:none;"></span>
+      </div>
+      <div class="workshop-buttons">
+        <button class="btn-workshop" onclick="confirmAndLoadRamirez()" data-i18n="btn_load_ramirez">Cargar Familia Ramírez</button>
+        <button class="btn-workshop" onclick="confirmAndLoadJohnson()" data-i18n="btn_load_johnson">Cargar Familia Johnson</button>
+        <button class="btn-danger" onclick="confirmAndClearAllData()" data-i18n="btn_clear_all">Borrar Todos los Datos</button>
+      </div>
+    </div>
 
     <!-- TAB: PLAN DE CUENTAS -->
     <section id="tab-accounts" class="tab-content active">
@@ -306,6 +361,8 @@
             <tbody id="initial-table-body"></tbody>
           </table>
         </div>
+        <!-- Section for Initial Balance Equation Status -->
+        <div id="initial-equation-status" style="margin-top: 15px;"></div>
       </div>
     </section>
 
@@ -314,7 +371,7 @@
       <div class="card">
         <div class="card-header-flex">
           <h2 data-i18n="budget_title">Control Presupuestario</h2>
-          <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
             <label for="budget-period" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_period">Período:</label>
             <select id="budget-period" onchange="renderBudgetTable()">
               <option value="daily" data-i18n="per_daily">Diario</option>
@@ -425,11 +482,8 @@
               <option value="all" data-i18n="per_all">Todo el Histórico</option>
             </select>
 
-            <!-- Selector dinámico específico según el período elegido -->
             <div id="report-subselectors" style="display: inline-flex; gap: 6px; align-items: center;"></div>
 
-            <!-- Nuevo selector: Base del Reporte (Actividad del Período vs. Acumulado hasta la fecha de cierre).
-                 Afecta únicamente al Estado de Resultados; el Balance General siempre es acumulado. -->
             <label for="report-basis" style="font-size: 0.88rem; font-weight: 600;" data-i18n="lbl_report_basis">Base del Reporte:</label>
             <select id="report-basis" onchange="renderReports()">
               <option value="period" selected data-i18n="basis_period">Actividad del Período</option>
@@ -451,6 +505,19 @@
             <div id="balance-sheet-body"></div>
           </div>
         </div>
+
+        <!-- FINANCIAL DECISION LAB -->
+        <div id="financial-decision-lab" class="decision-lab" style="display:none;">
+          <h3><i class="fas fa-microscope"></i> <span data-i18n="decision_lab_title">Laboratorio de Decisiones Financieras</span></h3>
+          <p style="font-size: 0.88rem; font-weight:600; color: #166534; margin-bottom: 8px;" data-i18n="lab_obs_heading">¿Qué te dicen los números?</p>
+          <ul id="decision-lab-observations" class="decision-list"></ul>
+
+          <div class="decision-questions">
+            <h4 data-i18n="lab_questions_heading">Preguntas para la Reflexión y Discusión:</h4>
+            <ul id="decision-lab-questions"></ul>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -483,14 +550,10 @@
             <h3><i class="fas fa-balance-scale"></i> <span data-i18n="concept_double_title">Partida Doble</span></h3>
             <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_double_desc">Principio contable según el cual cada transacción registrada afecta como mínimo a dos cuentas, de modo que el total del Debe equivale exactamente al total del Haber.</p>
           </div>
-
-          <!-- Explicación Estado de Resultados -->
           <div class="concept-card" style="grid-column: span 1;">
             <h3><i class="fas fa-file-alt"></i> <span data-i18n="concept_is_title">Estado de Resultados</span></h3>
             <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_is_desc">Muestra la dinámica económica durante un período determinado. Mide los Ingresos acumulados menos los Gastos incurridos, dando como resultado el Resultado Neto (Ganancia o Pérdida del período), el cual impacta directamente sobre el Patrimonio Neto aumentándolo o disminuyéndolo.</p>
           </div>
-
-          <!-- Explicación Balance General -->
           <div class="concept-card" style="grid-column: span 1;">
             <h3><i class="fas fa-balance-scale-right"></i> <span data-i18n="concept_bs_title">Balance General</span></h3>
             <p style="font-size: 0.88rem; color: var(--text-muted);" data-i18n="concept_bs_desc">Estructura estática a una fecha dada. Presenta la foto patrimonial de la entidad bajo la condición fundamental de equilibrio: Activo = Pasivo + Patrimonio Neto (A = P + PN). El Patrimonio Neto se integra con el Capital Inicial acumulado más el Resultado del Ejercicio.</p>
@@ -501,7 +564,7 @@
 
   </main>
 
-  <!-- Modales de Ayuda / Ejemplos -->
+  <!-- Help Modals -->
   <div class="modal-overlay" id="modal-accounts-help">
     <div class="modal-content">
       <button class="modal-close" onclick="closeModal('modal-accounts-help')">&times;</button>
@@ -553,12 +616,12 @@
   <!-- Footer -->
   <footer>
     <div class="footer-container">
-      <div class="footer-line-1">Family Finance System - Diseñado para uso educativo y familiar</div>
-      <div class="footer-line-2">© 2026 Adrián Cecotto - Todos los derechos reservados</div>
+      <div class="footer-line-1" data-i18n="footer_line_1">Family Finance System - Diseñado para uso educativo y familiar</div>
+      <div class="footer-line-2" data-i18n="footer_line_2">© 2026 Adrián Cecotto - Todos los derechos reservados</div>
     </div>
   </footer>
 
-  <!-- Botón WhatsApp -->
+  <!-- WhatsApp Float Button -->
   <a href="https://wa.me/16822313578" class="btn-whatsapp-float" target="_blank" rel="noopener" aria-label="Contacto WhatsApp">
     <span data-i18n="whatsapp_contact">Consultas o Contacto</span>
     <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i>
@@ -567,29 +630,32 @@
   <script>
     // --- STATE MANAGEMENT ---
     let currentLang = 'es';
+    let currentLoadedCase = null; // 'ramirez' | 'johnson' | null
 
-    // Cuentas por defecto ampliadas con más rubros de gastos típicos
-    let accounts = [
-      { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
-      { id: "102", es: "Banco / Cuenta Corriente", en: "Bank Account", type: "Asset" },
-      { id: "103", es: "Billetera Virtual", en: "Digital Wallet", type: "Asset" },
-      { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
-      { id: "202", es: "Préstamo Personal", en: "Personal Loan", type: "Liability" },
-      { id: "301", es: "Capital Familiar Acumulado", en: "Family Equity", type: "Equity" },
-      { id: "401", es: "Sueldos / Honorarios", en: "Salaries / Fees", type: "Revenue" },
-      { id: "402", es: "Rentas / Inversiones", en: "Investments", type: "Revenue" },
-      { id: "501", es: "Alimentación", en: "Groceries", type: "Expense", budget: 600 },
-      { id: "502", es: "Vivienda y Servicios (Luz, Agua, Gas)", en: "Housing & Utilities", type: "Expense", budget: 1200 },
-      { id: "503", es: "Transporte y Combustible", en: "Transport & Fuel", type: "Expense", budget: 300 },
-      { id: "504", es: "Salud y Medicina", en: "Healthcare & Pharmacy", type: "Expense", budget: 200 },
-      { id: "505", es: "Educación y Colegios", en: "Education & Tuition", type: "Expense", budget: 400 },
-      { id: "506", es: "Entretenimiento y Ocio", en: "Entertainment & Leisure", type: "Expense", budget: 150 },
-      { id: "507", es: "Ropa y Calzado", en: "Clothing & Footwear", type: "Expense", budget: 150 },
-      { id: "508", es: "Mantenimiento del Hogar", en: "Home Maintenance", type: "Expense", budget: 100 },
-      { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250 },
-      { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100 }
-    ];
+    function getDefaultChartOfAccounts() {
+      return [
+        { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
+        { id: "102", es: "Banco / Cuenta Corriente", en: "Bank Account", type: "Asset" },
+        { id: "103", es: "Billetera Virtual", en: "Digital Wallet", type: "Asset" },
+        { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
+        { id: "202", es: "Préstamo Personal", en: "Personal Loan", type: "Liability" },
+        { id: "301", es: "Capital Familiar Acumulado", en: "Family Equity", type: "Equity" },
+        { id: "401", es: "Sueldos / Honorarios", en: "Salaries / Fees", type: "Revenue" },
+        { id: "402", es: "Rentas / Inversiones", en: "Investments", type: "Revenue" },
+        { id: "501", es: "Alimentación", en: "Groceries", type: "Expense", budget: 600 },
+        { id: "502", es: "Vivienda y Servicios (Luz, Agua, Gas)", en: "Housing & Utilities", type: "Expense", budget: 1200 },
+        { id: "503", es: "Transporte y Combustible", en: "Transport & Fuel", type: "Expense", budget: 300 },
+        { id: "504", es: "Salud y Medicina", en: "Healthcare & Pharmacy", type: "Expense", budget: 200 },
+        { id: "505", es: "Educación y Colegios", en: "Education & Tuition", type: "Expense", budget: 400 },
+        { id: "506", es: "Entretenimiento y Ocio", en: "Entertainment & Leisure", type: "Expense", budget: 150 },
+        { id: "507", es: "Ropa y Calzado", en: "Clothing & Footwear", type: "Expense", budget: 150 },
+        { id: "508", es: "Mantenimiento del Hogar", en: "Home Maintenance", type: "Expense", budget: 100 },
+        { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250 },
+        { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100 }
+      ];
+    }
 
+    let accounts = getDefaultChartOfAccounts();
     let initialBalances = [];
     let journalEntries = [];
     let draftLines = [];
@@ -636,6 +702,8 @@
         t_debit: "Debe",
         t_credit: "Haber",
         t_balance: "Saldo",
+        t_debit_balance: "Saldo Deudor",
+        t_credit_balance: "Saldo Acreedor",
         t_init_balance: "Saldo Inicial",
         budget_title: "Control Presupuestario",
         lbl_period: "Período:",
@@ -704,7 +772,7 @@
         concept_is_desc: "Muestra la dinámica económica durante un período determinado. Mide los Ingresos acumulados menos los Gastos incurridos, dando como resultado el Resultado Neto (Ganancia o Pérdida del período), el cual impacta directamente sobre el Patrimonio Neto aumentándolo o disminuyéndolo.",
         concept_bs_title: "Balance General",
         concept_bs_desc: "Estructura estática a una fecha dada. Presenta la foto patrimonial de la entidad bajo la condición fundamental de equilibrio: Activo = Pasivo + Patrimonio Neto (A = P + PN). El Patrimonio Neto se integra con el Capital Inicial acumulado más el Resultado del Ejercicio.",
-        
+
         rpt_total_revenue: "Total Ingresos",
         rpt_total_expense: "Total Gastos",
         rpt_net_income: "Resultado Neto",
@@ -719,7 +787,29 @@
         rpt_total_liab_eq: "TOTAL PASIVO + PATRIMONIO",
         rpt_balance_control: "Control de Saldos (A = P + PN):",
         rpt_status_balanced: "BALANCEADO CORRECTAMENTE",
-        rpt_status_unbalanced: "DESBALANCE: "
+        rpt_status_unbalanced: "DESBALANCE: ",
+
+        /* Workshop & Decision Lab i18n */
+        workshop_title: "Ejemplos de Taller Educational",
+        btn_load_ramirez: "Cargar Familia Ramírez",
+        btn_load_johnson: "Cargar Familia Johnson",
+        btn_clear_all: "Borrar Todos los Datos",
+        confirm_load_ramirez: "ADVERTENCIA: Esta acción reemplazará todos los datos actuales con el caso de la Familia Ramírez (Ejemplo Educativo). ¿Desea continuar?",
+        confirm_load_johnson: "ADVERTENCIA: Esta acción reemplazará todos los datos actuales con el caso de la Familia Johnson (Ejemplo Educativo). ¿Desea continuar?",
+        confirm_clear_all: "ADVERTENCIA: Esta acción borrará los balances iniciales, asientos y presupuestos actuales, restableciendo el Plan de Cuentas estándar para trabajo práctico. ¿Desea continuar?",
+        validation_failed: "Error de Validación del Caso de Taller: ",
+        ramirez_case_label: "Caso Educativo: Familia Ramírez",
+        johnson_case_label: "Caso Educativo: Familia Johnson",
+        
+        ramirez_warning_title: "NOTA PEDAGÓGICA SOBRE EL BALANCE INICIAL:",
+        ramirez_warning_msg: "La familia Ramírez inicia con un patrimonio neto negativo real (-$4,950), ya que sus deudas ($5,700) superan sus activos ($750). Debido a que el sistema no permite ingresar patrimonio negativo directamente en el balance de apertura, la ecuación de apertura muestra un desbalance intencional. Este es un aspecto clave del caso de estudio para analizar en clase.",
+
+        decision_lab_title: "Laboratorio de Decisiones Financieras",
+        lab_obs_heading: "¿Qué te dicen los números?",
+        lab_questions_heading: "Preguntas para Reflexión y Discusión:",
+
+        footer_line_1: "Family Finance System - Diseñado para uso educativo y familiar",
+        footer_line_2: "© 2026 Adrián Cecotto - Todos los derechos reservados"
       },
       en: {
         app_subtitle: "Family finance system",
@@ -761,6 +851,8 @@
         t_debit: "Debit",
         t_credit: "Credit",
         t_balance: "Balance",
+        t_debit_balance: "Debit Balance",
+        t_credit_balance: "Credit Balance",
         t_init_balance: "Initial Balance",
         budget_title: "Budget Control",
         lbl_period: "Period:",
@@ -844,7 +936,29 @@
         rpt_total_liab_eq: "TOTAL LIABILITIES + EQUITY",
         rpt_balance_control: "Balance Check (A = L + E):",
         rpt_status_balanced: "BALANCED CORRECTLY",
-        rpt_status_unbalanced: "IMBALANCE: "
+        rpt_status_unbalanced: "IMBALANCE: ",
+
+        /* Workshop & Decision Lab i18n */
+        workshop_title: "Educational Workshop Examples",
+        btn_load_ramirez: "Load Ramirez Family",
+        btn_load_johnson: "Load Johnson Family",
+        btn_clear_all: "Clear All Data",
+        confirm_load_ramirez: "WARNING: This action will replace all current data with the Ramirez Family Educational Case. Do you want to continue?",
+        confirm_load_johnson: "WARNING: This action will replace all current data with the Johnson Family Educational Case. Do you want to continue?",
+        confirm_clear_all: "WARNING: This action will erase initial balances, journal entries, and budgets, resetting to the standard Chart of Accounts for participant exercise. Do you want to continue?",
+        validation_failed: "Workshop Case Validation Error: ",
+        ramirez_case_label: "Educational Case: Ramirez Family",
+        johnson_case_label: "Educational Case: Johnson Family",
+        
+        ramirez_warning_title: "PEDAGOGICAL NOTE ON OPENING BALANCE:",
+        ramirez_warning_msg: "The Ramirez family starts with a true negative net worth (-$4,950) because their liabilities ($5,700) exceed their assets ($750). Because the app intentionally does not support entering negative equity directly into opening balances, an opening equation imbalance is expected. This is an intentional educational lesson in the teaching case.",
+
+        decision_lab_title: "Financial Decision Lab",
+        lab_obs_heading: "What do the numbers tell you?",
+        lab_questions_heading: "Questions for Reflection & Discussion:",
+
+        footer_line_1: "Family Finance System - Designed for educational and family use",
+        footer_line_2: "© 2026 Adrián Cecotto - All rights reserved"
       }
     };
 
@@ -900,9 +1014,6 @@
     function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
     function switchTab(tabId, btnEl) {
-      // Corrección Fase 2 (#5): ya no depende del objeto global implícito `event`; el botón
-      // que originó la llamada se recibe explícitamente como segundo parámetro (this) desde
-      // cada onclick="switchTab('...', this)" en el HTML.
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
       document.getElementById(`tab-${tabId}`).classList.add('active');
@@ -918,8 +1029,6 @@
       updateDOM();
     }
 
-    // Corrección Fase 1 (Seguridad / Output Safety): escape mínimo y localizado para texto
-    // ingresado por el usuario que se inserta en HTML (nombres de cuenta, descripciones de asientos).
     function escapeHtml(str) {
       if (str === undefined || str === null) return '';
       return String(str)
@@ -953,6 +1062,22 @@
       renderTAccounts();
       renderBudgetTable();
       onReportPeriodChange();
+      renderCaseIndicator();
+    }
+
+    function renderCaseIndicator() {
+      const badge = document.getElementById('loaded-case-badge');
+      if (!badge) return;
+      if (currentLoadedCase === 'ramirez') {
+        badge.style.display = 'inline-block';
+        badge.textContent = translations[currentLang].ramirez_case_label;
+      } else if (currentLoadedCase === 'johnson') {
+        badge.style.display = 'inline-block';
+        badge.textContent = translations[currentLang].johnson_case_label;
+      } else {
+        badge.style.display = 'none';
+        badge.textContent = '';
+      }
     }
 
     // --- PLAN DE CUENTAS ---
@@ -966,17 +1091,13 @@
       let code = codeInput;
 
       if (code) {
-        // Corrección Fase 1 (#5): el código debe seguir el esquema numérico estructurado ya usado por la app.
         if (!/^[0-9]+$/.test(code)) {
           return alert(translations[currentLang].err_invalid_code);
         }
-        // Corrección Fase 1 (#4): rechazar códigos duplicados ANTES de insertar la cuenta.
         if (accounts.some(a => a.id === code)) {
           return alert(translations[currentLang].err_duplicate_code);
         }
       } else {
-        // Código no provisto: generar uno automáticamente dentro del rango numérico de su tipo,
-        // evitando colisiones con códigos ya existentes (antes podía coincidir con uno ya usado).
         const basePrefix = { Asset: 100, Liability: 200, Equity: 300, Revenue: 400, Expense: 500 }[type];
         let candidate = basePrefix + accounts.filter(a => a.type === type).length + 1;
         while (accounts.some(a => a.id === candidate.toString())) {
@@ -992,32 +1113,8 @@
     }
 
     function loadDefaultAccounts() {
-      const typical = [
-        { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
-        { id: "102", es: "Banco / Cuenta Corriente", en: "Bank Account", type: "Asset" },
-        { id: "103", es: "Billetera Virtual", en: "Digital Wallet", type: "Asset" },
-        { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
-        { id: "202", es: "Préstamo Personal", en: "Personal Loan", type: "Liability" },
-        { id: "301", es: "Capital Familiar Acumulado", en: "Family Equity", type: "Equity" },
-        { id: "401", es: "Sueldos / Honorarios", en: "Salaries / Fees", type: "Revenue" },
-        { id: "402", es: "Rentas / Inversiones", en: "Investments", type: "Revenue" },
-        { id: "501", es: "Alimentación", en: "Groceries", type: "Expense", budget: 600 },
-        { id: "502", es: "Vivienda y Servicios (Luz, Agua, Gas)", en: "Housing & Utilities", type: "Expense", budget: 1200 },
-        { id: "503", es: "Transporte y Combustible", en: "Transport & Fuel", type: "Expense", budget: 300 },
-        { id: "504", es: "Salud y Medicina", en: "Healthcare & Pharmacy", type: "Expense", budget: 200 },
-        { id: "505", es: "Educación y Colegios", en: "Education & Tuition", type: "Expense", budget: 400 },
-        { id: "506", es: "Entretenimiento y Ocio", en: "Entertainment & Leisure", type: "Expense", budget: 150 },
-        { id: "507", es: "Ropa y Calzado", en: "Clothing & Footwear", type: "Expense", budget: 150 },
-        { id: "508", es: "Mantenimiento del Hogar", en: "Home Maintenance", type: "Expense", budget: 100 },
-        { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250 },
-        { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100 }
-      ];
-      // Corrección Fase 2 (#6): reforzar la protección de Fase 1. Antes solo se advertía con un
-      // confirm() genérico; ahora, si reemplazar el plan de cuentas por el típico dejaría al
-      // Libro Diario o al Balance Inicial referenciando cuentas personalizadas que YA NO
-      // existirían (porque no forman parte del plan típico), se BLOQUEA la operación por
-      // completo en vez de solo advertir, evitando referencias huérfanas. Si no hay conflicto,
-      // se preserva la advertencia bilingüe existente antes del reemplazo destructivo.
+      const typical = getDefaultChartOfAccounts();
+
       const typicalIds = new Set(typical.map(a => a.id));
       const wouldOrphanJournal = journalEntries.some(e => e.lines.some(l => !typicalIds.has(l.accId)));
       const wouldOrphanInitial = initialBalances.some(b => !typicalIds.has(b.accId));
@@ -1029,12 +1126,12 @@
 
       if (!confirm(translations[currentLang].confirm_load_typical)) return;
 
+      currentLoadedCase = null;
       accounts = typical;
       updateDOM();
     }
 
     function updateAccountName(code, newName) {
-      // Corrección Fase 1 (#10): no permitir dejar el nombre de una cuenta vacío (dato inválido).
       const trimmed = (newName || '').trim();
       if (!trimmed) {
         renderAccountsTable();
@@ -1054,8 +1151,6 @@
     }
 
     function deleteAccount(code) {
-      // Corrección Fase 1 (#3): no permitir eliminar una cuenta referenciada en el Libro Diario,
-      // para no dejar líneas de asientos huérfanas apuntando a una cuenta inexistente.
       const referencedInJournal = journalEntries.some(e => e.lines.some(l => l.accId === code));
       if (referencedInJournal) {
         alert(translations[currentLang].err_account_in_use);
@@ -1117,13 +1212,12 @@
       renderJournalLines();
     }
 
-    // --- BALANCE INICIAL ---
+    // --- BALANCE INICIAL & VALIDATION ---
     function addInitialBalance() {
       const accId = document.getElementById('initial-acc-select').value;
       const amountVal = document.getElementById('initial-amount').value;
       const amount = parseFormattedNumber(amountVal);
 
-      // Corrección Fase 1 (#7): además de exigir monto > 0, verificar que la cuenta seleccionada exista.
       if (!accId || !accounts.some(a => a.id === accId) || isNaN(amount) || amount <= 0) return alert(currentLang === 'es' ? "Selecciona una cuenta e ingresa un monto válido mayor a cero" : "Select an account and enter a valid amount greater than zero");
 
       const existing = initialBalances.find(b => b.accId === accId);
@@ -1137,14 +1231,12 @@
     }
 
     function updateInitialAmount(accId, amountStr) {
-      // Corrección Fase 1 (#7): no permitir que la edición del balance inicial deje valores
-      // inválidos, cero o negativos de forma silenciosa.
       const existing = initialBalances.find(b => b.accId === accId);
       if (!existing) return;
       const amount = parseFormattedNumber(amountStr);
       if (isNaN(amount) || amount <= 0) {
         alert(translations[currentLang].err_invalid_amount);
-        renderInitialBalanceTable(); // revertir el campo al último valor válido
+        renderInitialBalanceTable();
         return;
       }
       existing.amount = amount;
@@ -1181,9 +1273,47 @@
           </tr>
         `;
       }).join('');
+
+      renderInitialEquationStatus();
     }
 
-    // --- LIBRO DIARIO CON REGISTRO NUMÉRICO DESDE DECIMALES ---
+    function renderInitialEquationStatus() {
+      const container = document.getElementById('initial-equation-status');
+      if (!container) return;
+
+      let initAssets = 0, initLiab = 0, initEquity = 0;
+      initialBalances.forEach(b => {
+        const acc = accounts.find(a => a.id === b.accId);
+        if (!acc) return;
+        if (acc.type === 'Asset') initAssets += b.amount;
+        if (acc.type === 'Liability') initLiab += b.amount;
+        if (acc.type === 'Equity') initEquity += b.amount;
+      });
+
+      const isBalanced = Math.abs(initAssets - (initLiab + initEquity)) < 0.01;
+      const diff = initAssets - (initLiab + initEquity);
+
+      let html = '';
+      if (currentLoadedCase === 'ramirez') {
+        html = `
+          <div style="padding: 12px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; color: #92400e; font-size: 0.88rem;">
+            <strong><i class="fas fa-exclamation-circle"></i> ${translations[currentLang].ramirez_warning_title}</strong><br>
+            ${translations[currentLang].ramirez_warning_msg}<br><br>
+            <em>${translations[currentLang].rpt_balance_control} ${formatCurrency(initAssets)} = ${formatCurrency(initLiab)} + ${formatCurrency(initEquity)} (${translations[currentLang].rpt_status_unbalanced} ${formatCurrency(diff)})</em>
+          </div>
+        `;
+      } else {
+        html = `
+          <div style="padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; background-color: ${isBalanced ? '#dcfce7' : '#fee2e2'}; color: ${isBalanced ? '#166534' : '#991b1b'}; border: 1px solid ${isBalanced ? '#bbf7d0' : '#fecaca'};">
+            <span><i class="fas ${isBalanced ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${translations[currentLang].rpt_balance_control} (${formatCurrency(initAssets)} vs ${formatCurrency(initLiab + initEquity)})</span>
+            <span>${isBalanced ? translations[currentLang].rpt_status_balanced : translations[currentLang].rpt_status_unbalanced + formatCurrency(diff)}</span>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
+    // --- LIBRO DIARIO ---
     function renderJournalLines() {
       const container = document.getElementById('journal-lines-container');
       if (!container) return;
@@ -1235,17 +1365,11 @@
       const date = document.getElementById('entry-date').value;
       const desc = document.getElementById('entry-desc').value.trim();
 
-      // Corrección Fase 1 (#6): rechazar descripción o fecha faltantes en lugar de continuar.
       if (!desc) return alert(translations[currentLang].err_missing_desc);
       if (!date) return alert(translations[currentLang].err_missing_date);
 
-      // Una línea se considera "cargada" si el usuario ingresó una cuenta o un monto.
-      // Las líneas completamente vacías (sin tocar) se ignoran, como antes.
       const meaningfulLines = draftLines.filter(l => l.accId || parseFloat(l.amount) > 0);
 
-      // Corrección Fase 1 (#6): cualquier línea cargada debe estar completa y ser válida
-      // (cuenta existente, monto > 0 y no NaN). Antes, una línea incompleta se descartaba
-      // silenciosamente en vez de rechazar el asiento completo.
       const hasInvalidLine = meaningfulLines.some(l => {
         const amt = parseFloat(l.amount);
         return !l.accId || !accounts.some(a => a.id === l.accId) || isNaN(amt) || amt <= 0 || (l.type !== 'debit' && l.type !== 'credit');
@@ -1315,7 +1439,7 @@
       }).join('');
     }
 
-    // --- CUENTAS T (LIBRO MAYOR) TRADUCIBLES Y AMPLIAS ---
+    // --- CUENTAS T (LIBRO MAYOR) ENHANCED WITH DEBIT/CREDIT BALANCE ---
     function renderTAccounts() {
       const container = document.getElementById('t-accounts-container');
       container.innerHTML = '';
@@ -1344,6 +1468,16 @@
         const totalDebit = debits.reduce((s, d) => s + d.amount, 0);
         const totalCredit = credits.reduce((s, c) => s + c.amount, 0);
 
+        let balanceText = "";
+        const diff = totalDebit - totalCredit;
+        if (diff > 0) {
+          balanceText = `${t.t_debit_balance}: ${formatCurrency(diff)}`;
+        } else if (diff < 0) {
+          balanceText = `${t.t_credit_balance}: ${formatCurrency(Math.abs(diff))}`;
+        } else {
+          balanceText = `${t.t_balance}: ${formatCurrency(0)}`;
+        }
+
         container.innerHTML += `
           <div class="t-account-card">
             <div class="t-account-header">${acc.id} - ${getAccName(acc)}</div>
@@ -1358,14 +1492,14 @@
               </div>
             </div>
             <div class="t-balance">
-              <strong>${t.t_balance}: ${formatCurrency(Math.abs(totalDebit - totalCredit))}</strong>
+              <strong>${balanceText}</strong>
             </div>
           </div>
         `;
       });
     }
 
-    // --- PRESUPUESTO CON REGISTRO NUMÉRICO DESDE DECIMALES ---
+    // --- PRESUPUESTO ENHANCED VARIANCE LOGIC ---
     function setBudgetAccount() {
       const accId = document.getElementById('budget-acc-select').value;
       const amountVal = document.getElementById('budget-amount').value;
@@ -1384,10 +1518,6 @@
       const tbody = document.getElementById('budget-table-body');
       const budgetAccs = accounts.filter(a => a.budget !== undefined && a.budget > 0);
 
-      // Corrección Fase 1 (#2) + Fase 2 (#4): el período seleccionado ya no se ignora, y ya no
-      // se asume siempre "hoy" como referencia implícita. Se agregó el control mínimo necesario
-      // (una fecha de referencia, "budget-ref-date") para que el usuario pueda analizar un
-      // período histórico o futuro con el mismo selector de granularidad de siempre.
       const periodSelect = document.getElementById('budget-period');
       const budgetPeriod = periodSelect ? periodSelect.value : 'monthly';
       const refDateInput = document.getElementById('budget-ref-date');
@@ -1413,15 +1543,27 @@
         });
 
         const budgeted = acc.budget || 0;
-        const variance = budgeted - actual;
+        let variance = 0;
+        let isFavorable = true;
+
+        if (acc.type === 'Expense') {
+          variance = budgeted - actual;
+          isFavorable = variance >= 0;
+        } else if (acc.type === 'Revenue') {
+          variance = actual - budgeted;
+          isFavorable = variance >= 0;
+        } else {
+          variance = budgeted - actual;
+          isFavorable = variance >= 0;
+        }
 
         return `
           <tr>
             <td>${getAccName(acc)}</td>
             <td class="text-right">${formatCurrency(budgeted)}</td>
             <td class="text-right"><strong>${formatCurrency(actual)}</strong></td>
-            <td class="text-right" style="color: ${variance < 0 ? 'var(--danger)' : 'var(--success)'}; font-weight: 600;">
-              ${formatCurrency(variance)}
+            <td class="text-right" style="color: ${isFavorable ? 'var(--success)' : 'var(--danger)'}; font-weight: 600;">
+              ${variance > 0 ? '+' : ''}${formatCurrency(variance)}
             </td>
             <td class="text-center">
               <button class="btn-danger" onclick="deleteBudget('${acc.id}')"><i class="fas fa-trash"></i></button>
@@ -1436,7 +1578,7 @@
       if (acc) { acc.budget = 0; renderBudgetTable(); }
     }
 
-    // --- CONTROL DINÁMICO DE SUB-SELECTORES DE PERÍODOS EN REPORTES ---
+    // --- REPORT SUBSELECTORS & PERIOD CALCULATIONS ---
     function onReportPeriodChange() {
       const period = document.getElementById('report-period').value;
       const container = document.getElementById('report-subselectors');
@@ -1451,9 +1593,6 @@
       let html = '';
 
       if (period === 'daily') {
-        // Corrección Fase 2 (#3): usar el helper de fecha local (toISODate) en vez de
-        // now.toISOString(), que convierte a UTC y puede mostrar el día anterior/siguiente
-        // según la zona horaria del usuario.
         const todayStr = toISODate(now);
         html = `<input type="date" id="rpt-date-picker" value="${todayStr}" onchange="renderReports()">`;
       } else if (period === 'weekly') {
@@ -1467,10 +1606,6 @@
         html += `</select>`;
         html += `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 80px;" onchange="renderReports()">`;
       } else if (period === 'quarterly') {
-        // Corrección Fase 2 (#1): el trimestre debe ser exactamente uno de los 4 trimestres
-        // calendario (Ene-Mar, Abr-Jun, Jul-Sep, Oct-Dic). Se reemplazan los dos selectores
-        // libres de mes-inicio/mes-fin por un único selector que solo permite esas 4 opciones,
-        // de modo que una combinación inválida (p. ej. Ene-Feb) deja de ser posible.
         const quarterLabels = currentLang === 'es'
           ? ['T1 (Ene-Mar)', 'T2 (Abr-Jun)', 'T3 (Jul-Sep)', 'T4 (Oct-Dic)']
           : ['Q1 (Jan-Mar)', 'Q2 (Apr-Jun)', 'Q3 (Jul-Sep)', 'Q4 (Oct-Dec)'];
@@ -1483,9 +1618,6 @@
         html += `</select>`;
         html += `<input type="number" id="rpt-year-picker" value="${currentYear}" style="width: 80px;" onchange="renderReports()">`;
       } else if (period === 'semiannual') {
-        // Corrección Fase 2 (#1): el semestre debe ser exactamente uno de los 2 semestres
-        // calendario (Ene-Jun, Jul-Dic). Mismo criterio que en trimestral: un único selector
-        // restringido a esas 2 opciones, eliminando la posibilidad de un rango inválido.
         const halfLabels = currentLang === 'es'
           ? ['S1 (Ene-Jun)', 'S2 (Jul-Dic)']
           : ['H1 (Jan-Jun)', 'H2 (Jul-Dec)'];
@@ -1505,9 +1637,6 @@
       renderReports();
     }
 
-    // --- UTILIDADES DE FECHA COMPARTIDAS (Corrección Fase 1, defecto #1) ---
-    // Formatea una fecha local como cadena ISO (YYYY-MM-DD) sin desplazamientos de huso horario,
-    // ya que se construye a partir de componentes locales (año/mes/día), nunca parseando UTC.
     function toISODate(d) {
       const yy = d.getFullYear();
       const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -1515,10 +1644,6 @@
       return `${yy}-${mm}-${dd}`;
     }
 
-    // Calcula el rango [inicio, fin] (cadenas ISO) de un período contable calendario a partir
-    // de una fecha de referencia (y, m 0-indexado, d). Única fuente de la lógica de límites de
-    // fecha para Diario/Semanal/Mensual/Trimestral/Semestral/Anual, evitando cálculos duplicados
-    // o inconsistentes entre Reportes y Presupuesto.
     function computeRangeFromYMD(period, y, m, d) {
       switch (period) {
         case 'daily': {
@@ -1526,10 +1651,8 @@
           return { start: iso, end: iso };
         }
         case 'weekly': {
-          // Semana real de 7 días (lunes a domingo) que contiene la fecha de referencia.
-          // Corrección Fase 1: ya no se usa Math.abs() ni una ventana de ±7 días.
           const ref = new Date(y, m, d);
-          const dow = ref.getDay(); // 0=Domingo ... 6=Sábado
+          const dow = ref.getDay();
           const mondayOffset = dow === 0 ? -6 : 1 - dow;
           const monday = new Date(y, m, d + mondayOffset);
           const sunday = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + 6);
@@ -1552,9 +1675,6 @@
       }
     }
 
-    // Traduce los selectores existentes de la pestaña Reportes (fecha/mes/año/mes-inicio/mes-fin)
-    // al rango de fechas correspondiente. Devuelve null si el período o los selectores son
-    // inválidos o están incompletos (en vez de incluir todo el histórico silenciosamente).
     function getPeriodDateRange(period) {
       switch (period) {
         case 'daily': {
@@ -1581,10 +1701,6 @@
           return computeRangeFromYMD('monthly', y, m, 1);
         }
         case 'quarterly': {
-          // Corrección Fase 2 (#1): ya no hay mes-inicio/mes-fin libres que validar o corregir;
-          // el selector único (rpt-quarter-picker) solo puede valer 0-3, uno de los 4 trimestres
-          // calendario exactos. computeRangeFromYMD ya calcula el trimestre calendario correcto
-          // a partir del mes (Math.floor(m/3)), por lo que pasamos el primer mes de ese trimestre.
           const qElem = document.getElementById('rpt-quarter-picker');
           const yearElem = document.getElementById('rpt-year-picker');
           if (!qElem || !yearElem || qElem.value === '' || yearElem.value === '') return null;
@@ -1594,8 +1710,6 @@
           return computeRangeFromYMD('quarterly', y, q * 3, 1);
         }
         case 'semiannual': {
-          // Corrección Fase 2 (#1): análogo al caso trimestral, restringido a los 2 semestres
-          // calendario exactos (0 = Ene-Jun, 1 = Jul-Dic).
           const hElem = document.getElementById('rpt-half-picker');
           const yearElem = document.getElementById('rpt-year-picker');
           if (!hElem || !yearElem || hElem.value === '' || yearElem.value === '') return null;
@@ -1616,27 +1730,13 @@
       }
     }
 
-    // --- FILTRADO POR PERÍODO ESPECÍFICO (Corrección Fase 1, defecto #1) ---
-    // Semanal ahora representa un período real de 7 días (no una ventana de ±7 días con Math.abs).
-    // Los selectores inválidos o incompletos ya no incluyen todo el histórico silenciosamente.
     function filterEntriesByPeriod(entries, period) {
       if (period === 'all') return entries;
-
       const range = getPeriodDateRange(period);
       if (!range) return [];
-
       return entries.filter(e => e.date && e.date >= range.start && e.date <= range.end);
     }
 
-    // Helper centralizado (Mejora: selector "Base del Reporte"): obtiene el conjunto de asientos
-    // a usar según la BASE elegida para el reporte:
-    //   - 'period'     -> solo los movimientos del período seleccionado (comportamiento por
-    //                      defecto/histórico, sin cambios; reutiliza filterEntriesByPeriod()).
-    //   - 'cumulative' -> todos los movimientos desde el origen hasta el CIERRE del período
-    //                      seleccionado (nunca desde su fecha de inicio).
-    // No duplica lógica de filtrado: reutiliza filterEntriesByPeriod()/getPeriodDateRange() ya
-    // existentes. La usan tanto el Estado de Resultados (según el selector) como el Balance
-    // General (que SIEMPRE pasa 'cumulative', sin importar el selector).
     function getReportEntriesByBasis(period, basis) {
       if (basis === 'cumulative') {
         if (period === 'all') return journalEntries;
@@ -1651,36 +1751,15 @@
       const periodSelect = document.getElementById('report-period');
       const selectedPeriod = periodSelect ? periodSelect.value : 'monthly';
       const basisSelect = document.getElementById('report-basis');
-      const reportBasis = basisSelect ? basisSelect.value : 'period'; // 'period' = comportamiento por defecto/original
+      const reportBasis = basisSelect ? basisSelect.value : 'period';
       const t = translations[currentLang];
 
-      // Mejora: el Estado de Resultados usa la BASE elegida por el usuario.
-      //   - 'period' (por defecto): solo los movimientos del período seleccionado (idéntico al
-      //     comportamiento anterior a este cambio — Corrección Fase 1 #9 preservada).
-      //   - 'cumulative': todos los movimientos desde el origen hasta el cierre del período.
       const periodEntries = getReportEntriesByBasis(selectedPeriod, reportBasis);
-
-      // El Balance General es una FOTOGRAFÍA a una fecha (saldo acumulado desde el origen hasta
-      // el cierre del período seleccionado), no solo los movimientos ocurridos durante el período.
-      // SIEMPRE es acumulado, sin importar el selector "Base del Reporte" (requisito explícito:
-      // el selector no debe afectar al Balance General).
       const cumulativeEntries = getReportEntriesByBasis(selectedPeriod, 'cumulative');
 
       function computeAccountBalances(entriesForCalc) {
         const bal = {};
         accounts.forEach(a => bal[a.id] = 0);
-        // Corrección Fase 2 (#2): verificado contra la convención ya usada en renderTAccounts()
-        // (líneas ~1292-1296) y en el bucle de líneas de asiento de abajo: un balance inicial
-        // siempre se suma al lado NATURAL de la cuenta (deudor para Activo/Gasto, acreedor para
-        // Pasivo/Patrimonio/Ingreso). Bajo esa convención, sumar el monto positivo tal cual
-        // (bal += amount) es matemáticamente correcto para los 5 tipos de cuenta — no hacía
-        // falta invertir el signo en ningún caso.
-        // Lo que SÍ estaba mal: las cuentas TEMPORALES (Ingreso/Gasto) son cuentas de flujo, no
-        // de saldo acumulado, por lo que no corresponde arrastrarles un "saldo inicial" hacia el
-        // Estado de Resultados de cada período (antes se sumaba igual para las 5, inflando
-        // Ingreso/Gasto en TODOS los períodos). Ahora el balance inicial solo se incorpora para
-        // cuentas PERMANENTES (Activo/Pasivo/Patrimonio), que es donde un saldo inicial tiene
-        // sentido contable.
         initialBalances.forEach(b => {
           const acc = accounts.find(a => a.id === b.accId);
           if (!acc) return;
@@ -1705,10 +1784,7 @@
       const incomeBalances = computeAccountBalances(periodEntries);
       const balanceSheetBalances = computeAccountBalances(cumulativeEntries);
 
-      // 1. Estado de Resultados
-      // Corrección Fase 1 (#8): ya no se exige balances > 0 (lo que ocultaba saldos negativos
-      // válidos); ahora se incluye cualquier saldo distinto de cero, respetando el signo ya
-      // calculado según el tipo de cuenta (débito o crédito).
+      // 1. Income Statement
       let totalRevenue = 0;
       let totalExpense = 0;
       let incomeHtml = '<table style="width:100%;">';
@@ -1727,32 +1803,25 @@
       });
       incomeHtml += `<tr style="font-weight:bold; background:#f1f5f9;"><td>${t.rpt_total_expense}</td><td class="text-right">${formatCurrency(totalExpense)}</td></tr>`;
 
-      const netIncome = totalRevenue - totalExpense; // Resultado del PERÍODO seleccionado (solo para el Estado de Resultados)
+      const netIncome = totalRevenue - totalExpense;
       incomeHtml += `<tr style="font-weight:bold; font-size:1rem; background:#e2e8f0;"><td>${t.rpt_net_income}</td><td class="text-right" style="color:${netIncome>=0?'var(--success)':'var(--danger)'}">${formatCurrency(netIncome)}</td></tr></table>`;
 
       document.getElementById('income-statement-body').innerHTML = incomeHtml;
 
-      // Corrección Fase 3 (bug crítico): el Balance General es una fotografía ACUMULADA hasta la
-      // fecha de cierre del período, no solo el resultado del período seleccionado. Antes se sumaba
-      // `netIncome` (que solo mide el período elegido, p. ej. marzo) directamente al Patrimonio,
-      // omitiendo el resultado de los períodos anteriores (p. ej. enero + febrero). La corrección
-      // calcula el resultado ACUMULADO (Ingresos - Gastos) a partir de `balanceSheetBalances`, que
-      // ya se construye con `cumulativeEntries` (todos los asientos hasta el cierre del período,
-      // ver más arriba) — es decir, se reutiliza el mismo dato ya calculado, sin tocar
-      // computeAccountBalances() ni el cálculo de periodEntries/cumulativeEntries.
+      // Cumulative Income for Balance Sheet
       let cumulativeRevenue = 0;
       let cumulativeExpense = 0;
       accounts.filter(a => a.type === 'Revenue').forEach(a => { cumulativeRevenue += balanceSheetBalances[a.id] || 0; });
       accounts.filter(a => a.type === 'Expense').forEach(a => { cumulativeExpense += balanceSheetBalances[a.id] || 0; });
       const cumulativeNetIncome = cumulativeRevenue - cumulativeExpense;
 
-      // 2. Balance General
+      // 2. Balance Sheet
       let totalAsset = 0;
       let totalLiability = 0;
       let totalEquity = 0;
       let balanceHtml = '<table style="width:100%;">';
 
-      // ACTIVOS
+      // Assets
       balanceHtml += `<tr><td colspan="2"><strong>${t.rpt_assets}</strong></td></tr>`;
       accounts.filter(a => a.type === 'Asset' && Math.abs(balanceSheetBalances[a.id] || 0) > 0.001).forEach(a => {
         const val = balanceSheetBalances[a.id] || 0;
@@ -1761,7 +1830,7 @@
       });
       balanceHtml += `<tr style="font-weight:600; background:#f8fafc; border-top: 1px solid var(--border);"><td style="padding-left:12px;"><em>${t.rpt_subtotal_assets}</em></td><td class="text-right"><em>${formatCurrency(totalAsset)}</em></td></tr>`;
 
-      // PASIVOS
+      // Liabilities
       balanceHtml += `<tr><td colspan="2" style="padding-top:10px;"><strong>${t.rpt_liabilities}</strong></td></tr>`;
       accounts.filter(a => a.type === 'Liability' && Math.abs(balanceSheetBalances[a.id] || 0) > 0.001).forEach(a => {
         const val = balanceSheetBalances[a.id] || 0;
@@ -1770,7 +1839,7 @@
       });
       balanceHtml += `<tr style="font-weight:600; background:#f8fafc; border-top: 1px solid var(--border);"><td style="padding-left:12px;"><em>${t.rpt_subtotal_liabilities}</em></td><td class="text-right"><em>${formatCurrency(totalLiability)}</em></td></tr>`;
 
-      // PATRIMONIO NETO
+      // Equity
       balanceHtml += `<tr><td colspan="2" style="padding-top:10px;"><strong>${t.rpt_equity}</strong></td></tr>`;
       accounts.filter(a => a.type === 'Equity' && Math.abs(balanceSheetBalances[a.id] || 0) > 0.001).forEach(a => {
         const val = balanceSheetBalances[a.id] || 0;
@@ -1788,11 +1857,9 @@
       const diff = totalAsset - totalPasivoPatrimonio;
       const isBalanced = Math.abs(diff) < 0.01;
 
-      // TOTALES
       balanceHtml += `<tr style="font-weight:bold; background:#e2e8f0; border-top:2px solid var(--primary);"><td style="padding-top:8px; padding-bottom:8px;">${t.rpt_total_assets}</td><td class="text-right">${formatCurrency(totalAsset)}</td></tr>`;
       balanceHtml += `<tr style="font-weight:bold; background:#e2e8f0;"><td style="padding-top:8px; padding-bottom:8px;">${t.rpt_total_liab_eq}</td><td class="text-right">${formatCurrency(totalPasivoPatrimonio)}</td></tr></table>`;
 
-      // CONTROL DE SALDOS
       balanceHtml += `
         <div style="margin-top: 15px; padding: 10px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; background-color: ${isBalanced ? '#dcfce7' : '#fee2e2'}; color: ${isBalanced ? '#166534' : '#991b1b'}; border: 1px solid ${isBalanced ? '#bbf7d0' : '#fecaca'};">
           <span><i class="fas ${isBalanced ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${t.rpt_balance_control}</span>
@@ -1801,18 +1868,475 @@
       `;
 
       document.getElementById('balance-sheet-body').innerHTML = balanceHtml;
+
+      renderFinancialDecisionLab(totalRevenue, totalExpense, netIncome, totalAsset, totalLiability, totalEquity, balanceSheetBalances);
+    }
+
+    // --- FINANCIAL DECISION LAB ---
+    function renderFinancialDecisionLab(revenue, expenses, netIncome, assets, liabilities, equity, accountBalances) {
+      const labContainer = document.getElementById('financial-decision-lab');
+      const obsContainer = document.getElementById('decision-lab-observations');
+      const questionsContainer = document.getElementById('decision-lab-questions');
+
+      if (!currentLoadedCase || (currentLoadedCase !== 'ramirez' && currentLoadedCase !== 'johnson')) {
+        labContainer.style.display = 'none';
+        return;
+      }
+
+      labContainer.style.display = 'block';
+      obsContainer.innerHTML = '';
+      questionsContainer.innerHTML = '';
+
+      const fmtNI = formatCurrency(netIncome);
+      const fmtLiab = formatCurrency(liabilities);
+      const fmtAssets = formatCurrency(assets);
+      const fmtEquity = formatCurrency(equity);
+
+      if (currentLoadedCase === 'ramirez') {
+        const loanBal = formatCurrency(accountBalances["202"] || 0);
+        const ccBal = formatCurrency(accountBalances["201"] || 0);
+        const interestVal = formatCurrency(accountBalances["505"] || 0);
+
+        const obsEs = [
+          `El ingreso neto del período fue positivo (${fmtNI}).`,
+          `La deuda total de pasivos cerró en ${fmtLiab} (Préstamo Personal: ${loanBal} + Tarjeta de Crédito: ${ccBal}).`,
+          `Se incurrió en un gasto de intereses de ${interestVal} por financiamiento de deuda.`,
+          "Los pagos de deudas (principal de préstamo y tarjeta) redujeron el efectivo pero disminuyeron pasivos sin constituir gastos.",
+          `La familia finalizó el período con un patrimonio neto de ${fmtEquity}.`
+        ];
+        const obsEn = [
+          `Period net income was positive (${fmtNI}).`,
+          `Total liability debt ended at ${fmtLiab} (Personal Loan: ${loanBal} + Credit Card: ${ccBal}).`,
+          `An interest expense of ${interestVal} was incurred for debt financing.`,
+          "Debt payments (loan principal and credit card) reduced cash and decreased liabilities without creating expenses.",
+          `The household ended the period with cumulative equity of ${fmtEquity}.`
+        ];
+        const listObs = currentLang === 'es' ? obsEs : obsEn;
+        listObs.forEach(o => {
+          obsContainer.innerHTML += `<li><i class="fas fa-check-circle"></i> ${o}</li>`;
+        });
+
+        const qEs = [
+          "¿Por qué la familia puede registrar un ingreso neto mensual positivo mientras mantiene o arrastra un nivel elevado de deuda?",
+          "¿Qué categorías de gasto contribuyeron en mayor medida a la variación presupuestaria?",
+          "¿Qué ocurrió con el patrimonio neto de la familia al final del período?",
+          "¿Cuáles transacciones afectaron el nivel de deuda sin constituir un gasto?",
+          "¿Qué decisión financiera informada podría cambiar la trayectoria de la familia?"
+        ];
+        const qEn = [
+          "Why can the family have positive monthly net income while carrying high total debt?",
+          "Which spending categories contributed most to the budget variance?",
+          "What happened to the family's net worth at the end of the period?",
+          "Which transactions affected debt levels without being expenses?",
+          "What informed financial decision could change the household's trajectory?"
+        ];
+        const listQ = currentLang === 'es' ? qEs : qEn;
+        listQ.forEach(q => {
+          questionsContainer.innerHTML += `<li>${q}</li>`;
+        });
+
+      } else if (currentLoadedCase === 'johnson') {
+        const invBal = formatCurrency(accountBalances["104"] || 0);
+        const savBal = formatCurrency(accountBalances["103"] || 0);
+
+        const obsEs = [
+          `El ingreso neto del período fue positivo (${fmtNI}).`,
+          `El activo total se incrementó a ${fmtAssets}, incluyendo ${invBal} en Cuenta de Inversión y ${savBal} en Ahorros.`,
+          `El pasivo total se redujo a ${fmtLiab} (saldo pendiente en Tarjeta de Crédito).`,
+          "Las transferencias hacia ahorros e inversiones cambiaron la composición de los activos sin generar gastos.",
+          `El patrimonio neto familiar alcanzó ${fmtEquity}, reflejando equilibrio en la ecuación contable.`
+        ];
+        const obsEn = [
+          `Period net income was positive (${fmtNI}).`,
+          `Total assets increased to ${fmtAssets}, including ${invBal} in Investment Account and ${savBal} in Savings.`,
+          `Total liabilities decreased to ${fmtLiab} (remaining Credit Card balance).`,
+          "Transfers to savings and investments changed asset composition without creating expenses.",
+          `Family equity reached ${fmtEquity}, demonstrating balance in the accounting equation.`
+        ];
+        const listObs = currentLang === 'es' ? obsEs : obsEn;
+        listObs.forEach(o => {
+          obsContainer.innerHTML += `<li><i class="fas fa-check-circle"></i> ${o}</li>`;
+        });
+
+        const qEs = [
+          "¿Cómo puede la familia ahorrar e invertir de forma constante manteniendo un ingreso neto positivo?",
+          "¿Cuáles transacciones cambiaron la composición de los activos sin transformarse en gastos?",
+          "¿Qué rol jugó el ahorro automatizado en la posición financiera mensual?",
+          "¿Qué diferencias entre la familia Ramírez y la familia Johnson son de comportamiento más que de nivel de ingresos?"
+        ];
+        const qEn = [
+          "How can the family save and invest consistently while maintaining positive net income?",
+          "Which transactions changed asset composition without becoming expenses?",
+          "What role did automated savings play in the monthly financial position?",
+          "What differences between Ramirez and Johnson are behavioral rather than income-related?"
+        ];
+        const listQ = currentLang === 'es' ? qEs : qEn;
+        listQ.forEach(q => {
+          questionsContainer.innerHTML += `<li>${q}</li>`;
+        });
+      }
+    }
+
+    // --- WORKSHOP DATASETS LOADING & VALIDATION ENGINE ---
+    function confirmAndLoadRamirez() {
+      if (confirm(translations[currentLang].confirm_load_ramirez)) {
+        loadRamirezDataset();
+      }
+    }
+
+    function confirmAndLoadJohnson() {
+      if (confirm(translations[currentLang].confirm_load_johnson)) {
+        loadJohnsonDataset();
+      }
+    }
+
+    function confirmAndClearAllData() {
+      if (confirm(translations[currentLang].confirm_clear_all)) {
+        clearAllData();
+      }
+    }
+
+    function clearAllData() {
+      accounts = getDefaultChartOfAccounts().map(account => ({ ...account, budget: 0 }));
+      initialBalances = [];
+      journalEntries = [];
+      draftLines = [];
+      currentLoadedCase = null;
+      resetDraftLines();
+      updateDOM();
+    }
+
+    function validateLoadedDataset(candidateAccounts, candidateInitialBalances, candidateJournalEntries, expected) {
+      if (candidateAccounts.length !== expected.accCount) {
+        throw new Error(`Account count mismatch. Expected: ${expected.accCount}, Found: ${candidateAccounts.length}`);
+      }
+      if (candidateJournalEntries.length !== expected.entryCount) {
+        throw new Error(`Journal entry count mismatch. Expected: ${expected.entryCount}, Found: ${candidateJournalEntries.length}`);
+      }
+
+      candidateJournalEntries.forEach((e, idx) => {
+        const d = e.lines.filter(l => l.type === 'debit').reduce((s, l) => s + l.amount, 0);
+        const c = e.lines.filter(l => l.type === 'credit').reduce((s, l) => s + l.amount, 0);
+        if (Math.abs(d - c) > 0.001) {
+          throw new Error(`Unbalanced entry at index ${idx} (${e.desc}): Debit = ${d}, Credit = ${c}`);
+        }
+      });
+
+      let totalRev = 0, totalExp = 0;
+      candidateAccounts.forEach(a => {
+        let bal = 0;
+        candidateJournalEntries.forEach(entry => {
+          entry.lines.forEach(line => {
+            if (line.accId === a.id) {
+              if (a.type === 'Expense') bal += (line.type === 'debit' ? line.amount : -line.amount);
+              if (a.type === 'Revenue') bal += (line.type === 'credit' ? line.amount : -line.amount);
+            }
+          });
+        });
+        if (a.type === 'Revenue') totalRev += bal;
+        if (a.type === 'Expense') totalExp += bal;
+      });
+
+      const netInc = totalRev - totalExp;
+
+      if (Math.abs(totalRev - expected.revenue) > 0.01) throw new Error(`Revenue mismatch. Expected: ${expected.revenue}, Got: ${totalRev}`);
+      if (Math.abs(totalExp - expected.expenses) > 0.01) throw new Error(`Expenses mismatch. Expected: ${expected.expenses}, Got: ${totalExp}`);
+      if (Math.abs(netInc - expected.netIncome) > 0.01) throw new Error(`Net Income mismatch. Expected: ${expected.netIncome}, Got: ${netInc}`);
+
+      let assets = 0, liab = 0, equityAccounts = 0;
+      candidateAccounts.forEach(a => {
+        let bal = 0;
+        candidateInitialBalances.forEach(b => { if (b.accId === a.id) bal += b.amount; });
+        candidateJournalEntries.forEach(entry => {
+          entry.lines.forEach(line => {
+            if (line.accId === a.id) {
+              if (a.type === 'Asset' || a.type === 'Expense') bal += (line.type === 'debit' ? line.amount : -line.amount);
+              else bal += (line.type === 'credit' ? line.amount : -line.amount);
+            }
+          });
+        });
+
+        if (a.type === 'Asset') assets += bal;
+        if (a.type === 'Liability') liab += bal;
+        if (a.type === 'Equity') equityAccounts += bal;
+      });
+
+      const totalEquityCalculated = equityAccounts + netInc;
+
+      if (expected.assets !== undefined && Math.abs(assets - expected.assets) > 0.01) throw new Error(`Assets mismatch. Expected: ${expected.assets}, Got: ${assets}`);
+      if (expected.liabilities !== undefined && Math.abs(liab - expected.liabilities) > 0.01) throw new Error(`Liabilities mismatch. Expected: ${expected.liabilities}, Got: ${liab}`);
+      if (expected.equity !== undefined && Math.abs(totalEquityCalculated - expected.equity) > 0.01) throw new Error(`Equity mismatch. Expected: ${expected.equity}, Got: ${totalEquityCalculated}`);
+
+      // Explicit Fundamental Accounting Equation Check: Assets = Liabilities + Total Equity
+      const accountingDifference = assets - (liab + totalEquityCalculated);
+      if (expected.checkEquation && Math.abs(accountingDifference) > 0.01) {
+        throw new Error(`Accounting Equation Imbalance (Assets = Liabilities + Equity): Assets (${assets}) != Liabilities (${liab}) + Equity (${totalEquityCalculated}). Difference: ${accountingDifference}`);
+      }
+    }
+
+    function loadRamirezDataset() {
+      try {
+        const candidateAccounts = [
+          { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
+          { id: "102", es: "Cuenta Corriente", en: "Checking Account", type: "Asset" },
+          { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
+          { id: "202", es: "Préstamo Personal", en: "Personal Loan", type: "Liability" },
+          { id: "301", es: "Capital Familiar", en: "Family Equity", type: "Equity" },
+          { id: "401", es: "Salario", en: "Salary", type: "Revenue", budget: 3600 },
+          { id: "501", es: "Supermercado", en: "Groceries", type: "Expense", budget: 500 },
+          { id: "502", es: "Vivienda y Servicios Públicos", en: "Housing & Utilities", type: "Expense", budget: 1300 },
+          { id: "503", es: "Transporte", en: "Transportation", type: "Expense", budget: 200 },
+          { id: "504", es: "Entretenimiento y Salidas", en: "Entertainment & Dining Out", type: "Expense", budget: 150 },
+          { id: "505", es: "Gastos Financieros / Intereses", en: "Interest Expense", type: "Expense", budget: 50 },
+          { id: "506", es: "Gastos Médicos / Emergencias", en: "Medical / Emergency Expenses", type: "Expense", budget: 0 }
+        ];
+
+        const candidateInitialBalances = [
+          { accId: "101", amount: 150 },
+          { accId: "102", amount: 600 },
+          { accId: "201", amount: 3200 },
+          { accId: "202", amount: 2500 }
+        ];
+
+        const candidateJournalEntries = [
+          {
+            id: 1001, date: "2026-06-01", desc: "Cobro de salario mensual en cuenta corriente",
+            lines: [
+              { accId: "102", type: "debit", amount: 3600 },
+              { accId: "401", type: "credit", amount: 3600 }
+            ]
+          },
+          {
+            id: 1002, date: "2026-06-03", desc: "Pago de alquiler y servicios con cuenta corriente",
+            lines: [
+              { accId: "502", type: "debit", amount: 1300 },
+              { accId: "102", type: "credit", amount: 1300 }
+            ]
+          },
+          {
+            id: 1003, date: "2026-06-05", desc: "Compras de supermercado del mes con tarjeta de crédito",
+            lines: [
+              { accId: "501", type: "debit", amount: 580 },
+              { accId: "201", type: "credit", amount: 580 }
+            ]
+          },
+          {
+            id: 1004, date: "2026-06-08", desc: "Carga de combustible y transporte en tarjeta de crédito",
+            lines: [
+              { accId: "503", type: "debit", amount: 240 },
+              { accId: "201", type: "credit", amount: 240 }
+            ]
+          },
+          {
+            id: 1005, date: "2026-06-12", desc: "Salidas a restaurantes y entretenimiento con tarjeta",
+            lines: [
+              { accId: "504", type: "debit", amount: 210 },
+              { accId: "201", type: "credit", amount: 210 }
+            ]
+          },
+          {
+            id: 1006, date: "2026-06-15", desc: "Pago mensual de cuota de préstamo personal (Principal $500 e Intereses $50)",
+            lines: [
+              { accId: "202", type: "debit", amount: 500 },
+              { accId: "505", type: "debit", amount: 50 },
+              { accId: "102", type: "credit", amount: 550 }
+            ]
+          },
+          {
+            id: 1007, date: "2026-06-18", desc: "Atención médica imprevista pagada en efectivo",
+            lines: [
+              { accId: "506", type: "debit", amount: 120 },
+              { accId: "101", type: "credit", amount: 120 }
+            ]
+          },
+          {
+            id: 1008, date: "2026-06-25", desc: "Pago parcial del resumen de tarjeta de crédito desde cuenta corriente",
+            lines: [
+              { accId: "201", type: "debit", amount: 1030 },
+              { accId: "102", type: "credit", amount: 1030 }
+            ]
+          },
+          {
+            id: 1009, date: "2026-06-28", desc: "Extracción de efectivo desde la cuenta corriente para compras menores",
+            lines: [
+              { accId: "101", type: "debit", amount: 200 },
+              { accId: "102", type: "credit", amount: 200 }
+            ]
+          },
+          {
+            id: 1010, date: "2026-06-30", desc: "Gastos menores de supermercado adicionales pagados en efectivo",
+            lines: [
+              { accId: "501", type: "debit", amount: 40 },
+              { accId: "101", type: "credit", amount: 40 }
+            ]
+          }
+        ];
+
+        validateLoadedDataset(candidateAccounts, candidateInitialBalances, candidateJournalEntries, {
+          accCount: 12,
+          entryCount: 10,
+          revenue: 3600,
+          expenses: 2540,
+          netIncome: 1060,
+          checkEquation: false
+        });
+
+        accounts = candidateAccounts;
+        initialBalances = candidateInitialBalances;
+        journalEntries = candidateJournalEntries;
+        currentLoadedCase = 'ramirez';
+        document.getElementById('budget-ref-date').value = "2026-06-15";
+        document.getElementById('entry-date').value = "2026-06-30";
+        updateDOM();
+      } catch (err) {
+        alert(translations[currentLang].validation_failed + err.message);
+      }
+    }
+
+    function loadJohnsonDataset() {
+      try {
+        const candidateAccounts = [
+          { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
+          { id: "102", es: "Cuenta Corriente", en: "Checking Account", type: "Asset" },
+          { id: "103", es: "Cuenta de Ahorros", en: "Savings Account", type: "Asset" },
+          { id: "104", es: "Cuenta de Inversión", en: "Investment Account (Brokerage)", type: "Asset" },
+          { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
+          { id: "301", es: "Capital Familiar", en: "Family Equity", type: "Equity" },
+          { id: "401", es: "Salario / Sueldos", en: "Salary / Wages", type: "Revenue", budget: 4200 },
+          { id: "402", es: "Ingresos por Inversiones", en: "Investment Income", type: "Revenue", budget: 60 },
+          { id: "501", es: "Supermercado", en: "Groceries", type: "Expense", budget: 550 },
+          { id: "502", es: "Vivienda y Servicios Públicos", en: "Housing & Utilities", type: "Expense", budget: 1400 },
+          { id: "503", es: "Transporte", en: "Transportation", type: "Expense", budget: 250 },
+          { id: "504", es: "Entretenimiento y Salidas", en: "Entertainment & Dining Out", type: "Expense", budget: 180 },
+          { id: "505", es: "Seguros y Salud", en: "Insurance & Health", type: "Expense", budget: 350 }
+        ];
+
+        const candidateInitialBalances = [
+          { accId: "101", amount: 300 },
+          { accId: "102", amount: 2500 },
+          { accId: "103", amount: 8000 },
+          { accId: "201", amount: 400 },
+          { accId: "301", amount: 10400 }
+        ];
+
+        const candidateJournalEntries = [
+          {
+            id: 2001, date: "2026-06-01", desc: "Cobro de salario mensual en cuenta corriente",
+            lines: [
+              { accId: "102", type: "debit", amount: 4200 },
+              { accId: "401", type: "credit", amount: 4200 }
+            ]
+          },
+          {
+            id: 2002, date: "2026-06-02", desc: "Pago total del saldo del resumen de tarjeta de crédito con cuenta corriente",
+            lines: [
+              { accId: "201", type: "debit", amount: 400 },
+              { accId: "102", type: "credit", amount: 400 }
+            ]
+          },
+          {
+            id: 2003, date: "2026-06-03", desc: "Pago de vivienda y servicios públicos desde cuenta corriente",
+            lines: [
+              { accId: "502", type: "debit", amount: 1380 },
+              { accId: "102", type: "credit", amount: 1380 }
+            ]
+          },
+          {
+            id: 2004, date: "2026-06-05", desc: "Transferencia programada de ahorro automático a la cuenta de ahorros",
+            lines: [
+              { accId: "103", type: "debit", amount: 900 },
+              { accId: "102", type: "credit", amount: 900 }
+            ]
+          },
+          {
+            id: 2005, date: "2026-06-08", desc: "Compras de supermercado del mes con tarjeta de crédito",
+            lines: [
+              { accId: "501", type: "debit", amount: 520 },
+              { accId: "201", type: "credit", amount: 520 }
+            ]
+          },
+          {
+            id: 2006, date: "2026-06-12", desc: "Pago de seguros de vida y salud con tarjeta de crédito",
+            lines: [
+              { accId: "505", type: "debit", amount: 340 },
+              { accId: "201", type: "credit", amount: 340 }
+            ]
+          },
+          {
+            id: 2007, date: "2026-06-15", desc: "Gastos de transporte y combustible abonados con cuenta corriente",
+            lines: [
+              { accId: "503", type: "debit", amount: 235 },
+              { accId: "102", type: "credit", amount: 235 }
+            ]
+          },
+          {
+            id: 2008, date: "2026-06-18", desc: "Aporte programado a fondo de inversión desde cuenta corriente",
+            lines: [
+              { accId: "104", type: "debit", amount: 300 },
+              { accId: "102", type: "credit", amount: 300 }
+            ]
+          },
+          {
+            id: 2009, date: "2026-06-22", desc: "Cobro de rendimientos/dividendos de inversión acreditados en cuenta de inversión",
+            lines: [
+              { accId: "104", type: "debit", amount: 60 },
+              { accId: "402", type: "credit", amount: 60 }
+            ]
+          },
+          {
+            id: 2010, date: "2026-06-25", desc: "Salidas y entretenimiento con tarjeta de crédito",
+            lines: [
+              { accId: "504", type: "debit", amount: 165 },
+              { accId: "201", type: "credit", amount: 165 }
+            ]
+          },
+          {
+            id: 2011, date: "2026-06-28", desc: "Pago parcial de consumos de tarjeta de crédito del mes desde cuenta corriente",
+            lines: [
+              { accId: "201", type: "debit", amount: 970 },
+              { accId: "102", type: "credit", amount: 970 }
+            ]
+          },
+          {
+            id: 2012, date: "2026-06-30", desc: "Gastos menores en efectivo para imprevistos domésticos",
+            lines: [
+              { accId: "501", type: "debit", amount: 225 },
+              { accId: "101", type: "credit", amount: 225 }
+            ]
+          }
+        ];
+
+        validateLoadedDataset(candidateAccounts, candidateInitialBalances, candidateJournalEntries, {
+          accCount: 13,
+          entryCount: 12,
+          revenue: 4260,
+          expenses: 2865,
+          netIncome: 1395,
+          assets: 11850,
+          liabilities: 55,
+          equity: 11795,
+          checkEquation: true
+        });
+
+        accounts = candidateAccounts;
+        initialBalances = candidateInitialBalances;
+        journalEntries = candidateJournalEntries;
+        currentLoadedCase = 'johnson';
+        document.getElementById('budget-ref-date').value = "2026-06-15";
+        document.getElementById('entry-date').value = "2026-06-30";
+        updateDOM();
+      } catch (err) {
+        alert(translations[currentLang].validation_failed + err.message);
+      }
     }
 
     // --- RESPALDO / DESCARGA ---
     function downloadBackup() {
-      const data = { accounts, initialBalances, journalEntries };
+      const data = { accounts, initialBalances, journalEntries, loadedCase: currentLoadedCase };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      // Corrección Fase 2 (#3): usar toISODate (fecha local) en vez de toISOString() (UTC)
-      // para nombrar el archivo, evitando que la fecha del respaldo se corra un día según
-      // la zona horaria del usuario.
       a.download = `FamilyFinance_Backup_${toISODate(new Date())}.json`;
       a.click();
       URL.revokeObjectURL(url);
@@ -1820,8 +2344,6 @@
 
     // --- INICIALIZACIÓN ---
     document.addEventListener("DOMContentLoaded", () => {
-      // Corrección Fase 2 (#3): usar toISODate (fecha local) en vez de toISOString() (UTC)
-      // para la fecha por defecto del asiento, evitando el corrimiento de día por huso horario.
       document.getElementById('entry-date').value = toISODate(new Date());
       const budgetRefDateEl = document.getElementById('budget-ref-date');
       if (budgetRefDateEl) budgetRefDateEl.value = toISODate(new Date());
