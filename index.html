@@ -291,7 +291,7 @@
         <span id="loaded-case-badge" class="case-indicator" style="display:none;"></span>
       </div>
       <div class="workshop-buttons">
-        <button class="btn-workshop" onclick="confirmAndLoadRamirez()" data-i18n="btn_load_ramirez">Cargar Familia Ramírez</button>
+        <button class="btn-workshop" onclick="confirmAndLoadCecotto()" data-i18n="btn_load_cecotto">Cargar Familia Cecotto</button>
         <button class="btn-workshop" onclick="confirmAndLoadJohnson()" data-i18n="btn_load_johnson">Cargar Familia Johnson</button>
         <button class="btn-danger" onclick="confirmAndClearAllData()" data-i18n="btn_clear_all">Borrar Todos los Datos</button>
       </div>
@@ -630,7 +630,7 @@
   <script>
     // --- STATE MANAGEMENT ---
     let currentLang = 'es';
-    let currentLoadedCase = null; // 'ramirez' | 'johnson' | null
+    let currentLoadedCase = null; // 'cecotto' | 'johnson' | null
 
     function getDefaultChartOfAccounts() {
       return [
@@ -791,18 +791,18 @@
 
         /* Workshop & Decision Lab i18n */
         workshop_title: "Ejemplos de Taller Educational",
-        btn_load_ramirez: "Cargar Familia Ramírez",
+        btn_load_cecotto: "Cargar Familia Cecotto",
         btn_load_johnson: "Cargar Familia Johnson",
         btn_clear_all: "Borrar Todos los Datos",
-        confirm_load_ramirez: "ADVERTENCIA: Esta acción reemplazará todos los datos actuales con el caso de la Familia Ramírez (Ejemplo Educativo). ¿Desea continuar?",
+        confirm_load_cecotto: "ADVERTENCIA: Esta acción reemplazará todos los datos actuales con el caso de la Familia Cecotto (Ejemplo Educativo). ¿Desea continuar?",
         confirm_load_johnson: "ADVERTENCIA: Esta acción reemplazará todos los datos actuales con el caso de la Familia Johnson (Ejemplo Educativo). ¿Desea continuar?",
         confirm_clear_all: "ADVERTENCIA: Esta acción borrará los balances iniciales, asientos y presupuestos actuales, restableciendo el Plan de Cuentas estándar para trabajo práctico. ¿Desea continuar?",
         validation_failed: "Error de Validación del Caso de Taller: ",
-        ramirez_case_label: "Caso Educativo: Familia Ramírez",
+        cecotto_case_label: "Caso Educativo: Familia Cecotto",
         johnson_case_label: "Caso Educativo: Familia Johnson",
         
-        ramirez_warning_title: "NOTA PEDAGÓGICA SOBRE EL BALANCE INICIAL:",
-        ramirez_warning_msg: "La familia Ramírez inicia con un patrimonio neto negativo real (-$4,950), ya que sus deudas ($5,700) superan sus activos ($750). Debido a que el sistema no permite ingresar patrimonio negativo directamente en el balance de apertura, la ecuación de apertura muestra un desbalance intencional. Este es un aspecto clave del caso de estudio para analizar en clase.",
+        cecotto_warning_title: "NOTA PEDAGÓGICA SOBRE EL BALANCE INICIAL:",
+        cecotto_warning_msg: "La familia Cecotto inicia con un patrimonio neto negativo real (-$4,950), ya que sus deudas ($5,700) superan sus activos ($750). Debido a que el sistema no permite ingresar patrimonio negativo directamente en el balance de apertura, la ecuación de apertura muestra un desbalance intencional. Este es un aspecto clave del caso de estudio para analizar en clase.",
 
         decision_lab_title: "Laboratorio de Decisiones Financieras",
         lab_obs_heading: "¿Qué te dicen los números?",
@@ -940,18 +940,18 @@
 
         /* Workshop & Decision Lab i18n */
         workshop_title: "Educational Workshop Examples",
-        btn_load_ramirez: "Load Ramirez Family",
+        btn_load_cecotto: "Load Cecotto Family",
         btn_load_johnson: "Load Johnson Family",
         btn_clear_all: "Clear All Data",
-        confirm_load_ramirez: "WARNING: This action will replace all current data with the Ramirez Family Educational Case. Do you want to continue?",
+        confirm_load_cecotto: "WARNING: This action will replace all current data with the Cecotto Family Educational Case. Do you want to continue?",
         confirm_load_johnson: "WARNING: This action will replace all current data with the Johnson Family Educational Case. Do you want to continue?",
         confirm_clear_all: "WARNING: This action will erase initial balances, journal entries, and budgets, resetting to the standard Chart of Accounts for participant exercise. Do you want to continue?",
         validation_failed: "Workshop Case Validation Error: ",
-        ramirez_case_label: "Educational Case: Ramirez Family",
+        cecotto_case_label: "Educational Case: Cecotto Family",
         johnson_case_label: "Educational Case: Johnson Family",
         
-        ramirez_warning_title: "PEDAGOGICAL NOTE ON OPENING BALANCE:",
-        ramirez_warning_msg: "The Ramirez family starts with a true negative net worth (-$4,950) because their liabilities ($5,700) exceed their assets ($750). Because the app intentionally does not support entering negative equity directly into opening balances, an opening equation imbalance is expected. This is an intentional educational lesson in the teaching case.",
+        cecotto_warning_title: "PEDAGOGICAL NOTE ON OPENING BALANCE:",
+        cecotto_warning_msg: "The Cecotto family starts with a true negative net worth (-$4,950) because their liabilities ($5,700) exceed their assets ($750). Because the app intentionally does not support entering negative equity directly into opening balances, an opening equation imbalance is expected. This is an intentional educational lesson in the teaching case.",
 
         decision_lab_title: "Financial Decision Lab",
         lab_obs_heading: "What do the numbers tell you?",
@@ -1068,9 +1068,9 @@
     function renderCaseIndicator() {
       const badge = document.getElementById('loaded-case-badge');
       if (!badge) return;
-      if (currentLoadedCase === 'ramirez') {
+      if (currentLoadedCase === 'cecotto') {
         badge.style.display = 'inline-block';
-        badge.textContent = translations[currentLang].ramirez_case_label;
+        badge.textContent = translations[currentLang].cecotto_case_label;
       } else if (currentLoadedCase === 'johnson') {
         badge.style.display = 'inline-block';
         badge.textContent = translations[currentLang].johnson_case_label;
@@ -1294,11 +1294,11 @@
       const diff = initAssets - (initLiab + initEquity);
 
       let html = '';
-      if (currentLoadedCase === 'ramirez') {
+      if (currentLoadedCase === 'cecotto') {
         html = `
           <div style="padding: 12px; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 6px; color: #92400e; font-size: 0.88rem;">
-            <strong><i class="fas fa-exclamation-circle"></i> ${translations[currentLang].ramirez_warning_title}</strong><br>
-            ${translations[currentLang].ramirez_warning_msg}<br><br>
+            <strong><i class="fas fa-exclamation-circle"></i> ${translations[currentLang].cecotto_warning_title}</strong><br>
+            ${translations[currentLang].cecotto_warning_msg}<br><br>
             <em>${translations[currentLang].rpt_balance_control} ${formatCurrency(initAssets)} = ${formatCurrency(initLiab)} + ${formatCurrency(initEquity)} (${translations[currentLang].rpt_status_unbalanced} ${formatCurrency(diff)})</em>
           </div>
         `;
@@ -1878,7 +1878,7 @@
       const obsContainer = document.getElementById('decision-lab-observations');
       const questionsContainer = document.getElementById('decision-lab-questions');
 
-      if (!currentLoadedCase || (currentLoadedCase !== 'ramirez' && currentLoadedCase !== 'johnson')) {
+      if (!currentLoadedCase || (currentLoadedCase !== 'cecotto' && currentLoadedCase !== 'johnson')) {
         labContainer.style.display = 'none';
         return;
       }
@@ -1892,7 +1892,7 @@
       const fmtAssets = formatCurrency(assets);
       const fmtEquity = formatCurrency(equity);
 
-      if (currentLoadedCase === 'ramirez') {
+      if (currentLoadedCase === 'cecotto') {
         const loanBal = formatCurrency(accountBalances["202"] || 0);
         const ccBal = formatCurrency(accountBalances["201"] || 0);
         const interestVal = formatCurrency(accountBalances["505"] || 0);
@@ -1962,13 +1962,13 @@
           "¿Cómo puede la familia ahorrar e invertir de forma constante manteniendo un ingreso neto positivo?",
           "¿Cuáles transacciones cambiaron la composición de los activos sin transformarse en gastos?",
           "¿Qué rol jugó el ahorro automatizado en la posición financiera mensual?",
-          "¿Qué diferencias entre la familia Ramírez y la familia Johnson son de comportamiento más que de nivel de ingresos?"
+          "¿Qué diferencias entre la familia Cecotto y la familia Johnson son de comportamiento más que de nivel de ingresos?"
         ];
         const qEn = [
           "How can the family save and invest consistently while maintaining positive net income?",
           "Which transactions changed asset composition without becoming expenses?",
           "What role did automated savings play in the monthly financial position?",
-          "What differences between Ramirez and Johnson are behavioral rather than income-related?"
+          "What differences between Cecotto and Johnson are behavioral rather than income-related?"
         ];
         const listQ = currentLang === 'es' ? qEs : qEn;
         listQ.forEach(q => {
@@ -1978,9 +1978,9 @@
     }
 
     // --- WORKSHOP DATASETS LOADING & VALIDATION ENGINE ---
-    function confirmAndLoadRamirez() {
-      if (confirm(translations[currentLang].confirm_load_ramirez)) {
-        loadRamirezDataset();
+    function confirmAndLoadCecotto() {
+      if (confirm(translations[currentLang].confirm_load_cecotto)) {
+        loadCecottoDataset();
       }
     }
 
@@ -2074,7 +2074,7 @@
       }
     }
 
-    function loadRamirezDataset() {
+    function loadCecottoDataset() {
       try {
         const candidateAccounts = [
           { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
@@ -2184,7 +2184,7 @@
         accounts = candidateAccounts;
         initialBalances = candidateInitialBalances;
         journalEntries = candidateJournalEntries;
-        currentLoadedCase = 'ramirez';
+        currentLoadedCase = 'cecotto';
         document.getElementById('budget-ref-date').value = "2026-06-15";
         document.getElementById('entry-date').value = "2026-06-30";
         updateDOM();
