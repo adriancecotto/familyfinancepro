@@ -165,6 +165,76 @@
     .text-right { text-align: right; }
     .text-center { text-align: center; }
 
+    /* Budget Categories */
+    .budget-category-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .budget-category-card.drag-over {
+      border: 2px dashed var(--accent);
+      background-color: #eff6ff;
+    }
+    .budget-category-header {
+      padding: 0.75rem 1rem;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+    .cat-header-income { background: #0e7490; }
+    .cat-header-savings { background: #047857; }
+    .cat-header-fixed { background: #b45309; }
+    .cat-header-variable { background: #6d28d9; }
+    .cat-header-uncategorized { background: #475569; }
+
+    .draggable-row {
+      cursor: grab;
+    }
+    .draggable-row:active {
+      cursor: grabbing;
+    }
+    .draggable-row.dragging {
+      opacity: 0.5;
+    }
+
+    .budget-summary-card {
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .budget-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .budget-summary-item {
+      background: white;
+      padding: 0.85rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    .budget-summary-item label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .budget-summary-item .value {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
     /* T-Accounts */
     .t-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 1.25rem; }
     .t-account-card {
@@ -392,20 +462,15 @@
           <button class="btn-primary" onclick="setBudgetAccount()" data-i18n="btn_set_budget">Asignar Presupuesto</button>
         </div>
 
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th data-i18n="col_account">Cuenta</th>
-                <th class="text-right" data-i18n="col_budgeted">Presupuestado</th>
-                <th class="text-right" data-i18n="col_actual">Ejecutado Real</th>
-                <th class="text-right" data-i18n="col_variance">Variación</th>
-                <th class="text-center" style="width: 100px;" data-i18n="col_actions">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="budget-table-body"></tbody>
-          </table>
-        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;" data-i18n="budget_drag_instruction">
+          <i class="fas fa-info-circle"></i> Arrastre las cuentas entre categorías o utilice el selector desplegable en cada fila para reclasificarlas.
+        </p>
+
+        <!-- Dynamic Budget Categories Container -->
+        <div id="budget-categories-container"></div>
+
+        <!-- Budget Plan Summary Totals -->
+        <div id="budget-summary-container"></div>
       </div>
     </section>
 
@@ -642,16 +707,16 @@
         { id: "301", es: "Capital Familiar Acumulado", en: "Family Equity", type: "Equity" },
         { id: "401", es: "Sueldos / Honorarios", en: "Salaries / Fees", type: "Revenue" },
         { id: "402", es: "Rentas / Inversiones", en: "Investments", type: "Revenue" },
-        { id: "501", es: "Alimentación", en: "Groceries", type: "Expense", budget: 600 },
-        { id: "502", es: "Vivienda y Servicios (Luz, Agua, Gas)", en: "Housing & Utilities", type: "Expense", budget: 1200 },
-        { id: "503", es: "Transporte y Combustible", en: "Transport & Fuel", type: "Expense", budget: 300 },
-        { id: "504", es: "Salud y Medicina", en: "Healthcare & Pharmacy", type: "Expense", budget: 200 },
-        { id: "505", es: "Educación y Colegios", en: "Education & Tuition", type: "Expense", budget: 400 },
-        { id: "506", es: "Entretenimiento y Ocio", en: "Entertainment & Leisure", type: "Expense", budget: 150 },
-        { id: "507", es: "Ropa y Calzado", en: "Clothing & Footwear", type: "Expense", budget: 150 },
-        { id: "508", es: "Mantenimiento del Hogar", en: "Home Maintenance", type: "Expense", budget: 100 },
-        { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250 },
-        { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100 }
+        { id: "501", es: "Alimentación", en: "Groceries", type: "Expense", budget: 600, budgetCategory: "variable" },
+        { id: "502", es: "Vivienda y Servicios (Luz, Agua, Gas)", en: "Housing & Utilities", type: "Expense", budget: 1200, budgetCategory: "fixed" },
+        { id: "503", es: "Transporte y Combustible", en: "Transport & Fuel", type: "Expense", budget: 300, budgetCategory: "variable" },
+        { id: "504", es: "Salud y Medicina", en: "Healthcare & Pharmacy", type: "Expense", budget: 200, budgetCategory: "variable" },
+        { id: "505", es: "Educación y Colegios", en: "Education & Tuition", type: "Expense", budget: 400, budgetCategory: "fixed" },
+        { id: "506", es: "Entretenimiento y Ocio", en: "Entertainment & Leisure", type: "Expense", budget: 150, budgetCategory: "variable" },
+        { id: "507", es: "Ropa y Calzado", en: "Clothing & Footwear", type: "Expense", budget: 150, budgetCategory: "variable" },
+        { id: "508", es: "Mantenimiento del Hogar", en: "Home Maintenance", type: "Expense", budget: 100, budgetCategory: "variable" },
+        { id: "509", es: "Seguros y Protección", en: "Insurance", type: "Expense", budget: 250, budgetCategory: "fixed" },
+        { id: "510", es: "Gastos Varios / Imprevistos", en: "Miscellaneous", type: "Expense", budget: 100, budgetCategory: "variable" }
       ];
     }
 
@@ -705,7 +770,8 @@
         t_debit_balance: "Saldo Deudor",
         t_credit_balance: "Saldo Acreedor",
         t_init_balance: "Saldo Inicial",
-        budget_title: "Control Presupuestario",
+        budget_title: "Control Presupuestario (Plan de Gastos)",
+        budget_drag_instruction: "Arrastre las cuentas entre categorías o utilice el selector desplegable en cada fila para reclasificarlas.",
         lbl_period: "Período:",
         lbl_ref_date: "Fecha de referencia:",
         lbl_report_basis: "Base del Reporte:",
@@ -723,6 +789,27 @@
         col_budgeted: "Presupuestado",
         col_actual: "Ejecutado Real",
         col_variance: "Variación",
+        col_move_cat: "Categoría del Plan",
+
+        /* Budget Categories i18n */
+        bcat_income: "INGRESOS",
+        bcat_savings: "RESERVA Y AHORRO",
+        bcat_fixed: "GASTOS FIJOS",
+        bcat_variable: "GASTOS VARIABLES",
+        bcat_uncategorized: "SIN CLASIFICAR",
+        
+        bcat_subtotal_income: "Subtotal Ingresos",
+        bcat_subtotal_savings: "Subtotal Reserva y Ahorro",
+        bcat_subtotal_fixed: "Subtotal Gastos Fijos",
+        bcat_subtotal_variable: "Subtotal Gastos Variables",
+        bcat_subtotal_uncategorized: "Subtotal Sin Clasificar",
+
+        budget_total_planned: "Total Presupuestado (Plan de Gastos y Ahorro)",
+        budget_total_income: "Total Ingresos Previstos",
+        budget_remaining: "Monto Restante / Por Asignar",
+        budget_over_budget: "¡ATENCIÓN! Presupuesto Sobreasignado (Los gastos y reservas superan los ingresos)",
+        budget_balanced_ok: "Presupuesto Balanceado y Asignado Correctamente",
+
         reports_title: "Estados Financieros",
         income_statement: "Estado de Resultados",
         balance_sheet: "Balance General",
@@ -806,7 +893,7 @@
 
         decision_lab_title: "Laboratorio de Decisiones Financieras",
         lab_obs_heading: "¿Qué te dicen los números?",
-        lab_questions_heading: "Preguntas para Reflexión y Discusión:",
+        lab_questions_heading: "Preguntas para la Reflexión y Discusión:",
 
         footer_line_1: "Family Finance System - Diseñado para uso educativo y familiar",
         footer_line_2: "© 2026 Adrián Cecotto - Todos los derechos reservados"
@@ -854,7 +941,8 @@
         t_debit_balance: "Debit Balance",
         t_credit_balance: "Credit Balance",
         t_init_balance: "Initial Balance",
-        budget_title: "Budget Control",
+        budget_title: "Budget Control (Spending Plan)",
+        budget_drag_instruction: "Drag accounts between categories or use the dropdown category selector on each row to reclassify them.",
         lbl_period: "Period:",
         lbl_ref_date: "Reference date:",
         lbl_report_basis: "Report Basis:",
@@ -872,6 +960,27 @@
         col_budgeted: "Budgeted",
         col_actual: "Actual Spent",
         col_variance: "Variance",
+        col_move_cat: "Plan Category",
+
+        /* Budget Categories i18n */
+        bcat_income: "INCOME",
+        bcat_savings: "SET ASIDE & SAVINGS",
+        bcat_fixed: "FIXED EXPENSES",
+        bcat_variable: "VARIABLE EXPENSES",
+        bcat_uncategorized: "UNCATEGORIZED",
+
+        bcat_subtotal_income: "Subtotal Income",
+        bcat_subtotal_savings: "Subtotal Set Aside & Savings",
+        bcat_subtotal_fixed: "Subtotal Fixed Expenses",
+        bcat_subtotal_variable: "Subtotal Variable Expenses",
+        bcat_subtotal_uncategorized: "Subtotal Uncategorized",
+
+        budget_total_planned: "Total Planned (Spending & Savings)",
+        budget_total_income: "Total Expected Income",
+        budget_remaining: "Remaining / Unallocated Amount",
+        budget_over_budget: "WARNING! Budget Over-Allocated (Planned expenses and savings exceed total income)",
+        budget_balanced_ok: "Budget Balanced & Successfully Allocated",
+
         reports_title: "Financial Statements",
         income_statement: "Income Statement",
         balance_sheet: "Balance Sheet",
@@ -1499,7 +1608,26 @@
       });
     }
 
-    // --- PRESUPUESTO ENHANCED VARIANCE LOGIC ---
+    // --- PRESUPUESTO FOUR-CATEGORY SPENDING PLAN LOGIC ---
+    function getDefaultBudgetCategory(acc) {
+      if (!acc) return 'uncategorized';
+      if (acc.type === 'Revenue') return 'income';
+      if (acc.type === 'Expense') {
+        const nameLower = (acc.es + ' ' + acc.en).toLowerCase();
+        if (nameLower.includes('vivienda') || nameLower.includes('housing') || nameLower.includes('alquiler') || nameLower.includes('rent') || nameLower.includes('seguro') || nameLower.includes('insurance') || nameLower.includes('educación') || nameLower.includes('tuition')) {
+          return 'fixed';
+        }
+        return 'variable';
+      }
+      if (acc.type === 'Asset' || acc.type === 'Liability') {
+        const nameLower = (acc.es + ' ' + acc.en).toLowerCase();
+        if (nameLower.includes('ahorro') || nameLower.includes('saving') || nameLower.includes('invers') || nameLower.includes('invest') || nameLower.includes('reserva') || nameLower.includes('reserve')) {
+          return 'savings';
+        }
+      }
+      return 'uncategorized';
+    }
+
     function setBudgetAccount() {
       const accId = document.getElementById('budget-acc-select').value;
       const amountVal = document.getElementById('budget-amount').value;
@@ -1508,15 +1636,68 @@
       if (!accId || isNaN(amount) || amount <= 0) return alert(currentLang === 'es' ? "Selecciona una cuenta e ingresa el valor a presupuestar" : "Select an account and enter a budgeted amount");
 
       const acc = accounts.find(a => a.id === accId);
-      if (acc) acc.budget = amount;
+      if (acc) {
+        acc.budget = amount;
+        if (!acc.budgetCategory) {
+          acc.budgetCategory = getDefaultBudgetCategory(acc);
+        }
+      }
 
       document.getElementById('budget-amount').value = '';
       renderBudgetTable();
     }
 
+    function updateAccountBudgetCategory(accId, newCategory) {
+      const acc = accounts.find(a => a.id === accId);
+      if (acc) {
+        acc.budgetCategory = newCategory;
+        renderBudgetTable();
+      }
+    }
+
+    function onBudgetDragStart(e, accId) {
+      e.dataTransfer.setData('text/plain', accId);
+      e.dataTransfer.effectAllowed = 'move';
+      e.currentTarget.classList.add('dragging');
+    }
+
+    function onBudgetDragEnd(e) {
+      e.currentTarget.classList.remove('dragging');
+    }
+
+    function onBudgetDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function onBudgetDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    function onBudgetDrop(e, targetCategory) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const accId = e.dataTransfer.getData('text/plain');
+      if (accId) {
+        updateAccountBudgetCategory(accId, targetCategory);
+      }
+    }
+
     function renderBudgetTable() {
-      const tbody = document.getElementById('budget-table-body');
+      const container = document.getElementById('budget-categories-container');
+      const summaryContainer = document.getElementById('budget-summary-container');
+      if (!container) return;
+
+      const t = translations[currentLang];
       const budgetAccs = accounts.filter(a => a.budget !== undefined && a.budget > 0);
+
+      // Ensure every budgeted account has a category
+      budgetAccs.forEach(acc => {
+        if (!acc.budgetCategory) {
+          acc.budgetCategory = getDefaultBudgetCategory(acc);
+        }
+      });
 
       const periodSelect = document.getElementById('budget-period');
       const budgetPeriod = periodSelect ? periodSelect.value : 'monthly';
@@ -1531,46 +1712,168 @@
       }
       const budgetRange = computeRangeFromYMD(budgetPeriod, refY, refM, refD);
 
-      tbody.innerHTML = budgetAccs.map(acc => {
-        let actual = 0;
-        journalEntries.forEach(entry => {
-          if (budgetRange && !(entry.date >= budgetRange.start && entry.date <= budgetRange.end)) return;
-          entry.lines.forEach(line => {
-            if (line.accId !== acc.id) return;
-            if (acc.type === 'Expense' && line.type === 'debit') actual += line.amount;
-            if (acc.type === 'Revenue' && line.type === 'credit') actual += line.amount;
+      const categoriesKeys = ['income', 'savings', 'fixed', 'variable'];
+      if (budgetAccs.some(a => a.budgetCategory === 'uncategorized')) {
+        categoriesKeys.push('uncategorized');
+      }
+
+      const catHeaderClasses = {
+        income: 'cat-header-income',
+        savings: 'cat-header-savings',
+        fixed: 'cat-header-fixed',
+        variable: 'cat-header-variable',
+        uncategorized: 'cat-header-uncategorized'
+      };
+
+      let categorySubtotals = { income: 0, savings: 0, fixed: 0, variable: 0, uncategorized: 0 };
+      let categoryActuals = { income: 0, savings: 0, fixed: 0, variable: 0, uncategorized: 0 };
+
+      let categoriesHtml = '';
+
+      categoriesKeys.forEach(catKey => {
+        const catAccounts = budgetAccs.filter(a => a.budgetCategory === catKey);
+        
+        let rowsHtml = '';
+        let subtotalBudget = 0;
+        let subtotalActual = 0;
+
+        catAccounts.forEach(acc => {
+          let actual = 0;
+          journalEntries.forEach(entry => {
+            if (budgetRange && !(entry.date >= budgetRange.start && entry.date <= budgetRange.end)) return;
+            entry.lines.forEach(line => {
+              if (line.accId !== acc.id) return;
+              if (acc.type === 'Expense' && line.type === 'debit') actual += line.amount;
+              else if (acc.type === 'Revenue' && line.type === 'credit') actual += line.amount;
+              else if (acc.type === 'Asset' && line.type === 'debit') actual += line.amount;
+              else if (acc.type === 'Liability' && line.type === 'debit') actual += line.amount;
+            });
           });
+
+          const budgeted = acc.budget || 0;
+          subtotalBudget += budgeted;
+          subtotalActual += actual;
+
+          let variance = 0;
+          let isFavorable = true;
+
+          if (catKey === 'income' || acc.type === 'Revenue') {
+            variance = actual - budgeted;
+            isFavorable = variance >= 0;
+          } else {
+            variance = budgeted - actual;
+            isFavorable = variance >= 0;
+          }
+
+          rowsHtml += `
+            <tr class="draggable-row" draggable="true" ondragstart="onBudgetDragStart(event, '${acc.id}')" ondragend="onBudgetDragEnd(event)">
+              <td><i class="fas fa-grip-vertical" style="color: #cbd5e1; margin-right: 8px; cursor: grab;"></i> <strong>${acc.id}</strong> - ${getAccName(acc)}</td>
+              <td class="text-right">${formatCurrency(budgeted)}</td>
+              <td class="text-right"><strong>${formatCurrency(actual)}</strong></td>
+              <td class="text-right" style="color: ${isFavorable ? 'var(--success)' : 'var(--danger)'}; font-weight: 600;">
+                ${variance > 0 ? '+' : ''}${formatCurrency(variance)}
+              </td>
+              <td class="text-center" style="width: 170px;">
+                <select style="font-size: 0.78rem; padding: 3px 6px;" onchange="updateAccountBudgetCategory('${acc.id}', this.value)">
+                  <option value="income" ${acc.budgetCategory === 'income' ? 'selected' : ''}>${t.bcat_income}</option>
+                  <option value="savings" ${acc.budgetCategory === 'savings' ? 'selected' : ''}>${t.bcat_savings}</option>
+                  <option value="fixed" ${acc.budgetCategory === 'fixed' ? 'selected' : ''}>${t.bcat_fixed}</option>
+                  <option value="variable" ${acc.budgetCategory === 'variable' ? 'selected' : ''}>${t.bcat_variable}</option>
+                  <option value="uncategorized" ${acc.budgetCategory === 'uncategorized' ? 'selected' : ''}>${t.bcat_uncategorized}</option>
+                </select>
+              </td>
+              <td class="text-center" style="width: 60px;">
+                <button class="btn-danger" onclick="deleteBudget('${acc.id}')" title="Eliminar del Presupuesto"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          `;
         });
 
-        const budgeted = acc.budget || 0;
-        let variance = 0;
-        let isFavorable = true;
+        categorySubtotals[catKey] = subtotalBudget;
+        categoryActuals[catKey] = subtotalActual;
 
-        if (acc.type === 'Expense') {
-          variance = budgeted - actual;
-          isFavorable = variance >= 0;
-        } else if (acc.type === 'Revenue') {
-          variance = actual - budgeted;
-          isFavorable = variance >= 0;
-        } else {
-          variance = budgeted - actual;
-          isFavorable = variance >= 0;
-        }
-
-        return `
-          <tr>
-            <td>${getAccName(acc)}</td>
-            <td class="text-right">${formatCurrency(budgeted)}</td>
-            <td class="text-right"><strong>${formatCurrency(actual)}</strong></td>
-            <td class="text-right" style="color: ${isFavorable ? 'var(--success)' : 'var(--danger)'}; font-weight: 600;">
-              ${variance > 0 ? '+' : ''}${formatCurrency(variance)}
-            </td>
-            <td class="text-center">
-              <button class="btn-danger" onclick="deleteBudget('${acc.id}')"><i class="fas fa-trash"></i></button>
-            </td>
-          </tr>
+        categoriesHtml += `
+          <div class="budget-category-card" 
+               ondragover="onBudgetDragOver(event)" 
+               ondragleave="onBudgetDragLeave(event)" 
+               ondrop="onBudgetDrop(event, '${catKey}')">
+            <div class="budget-category-header ${catHeaderClasses[catKey]}">
+              <span><i class="fas ${catKey === 'income' ? 'fa-hand-holding-usd' : catKey === 'savings' ? 'fa-piggy-bank' : catKey === 'fixed' ? 'fa-lock' : catKey === 'variable' ? 'fa-shopping-cart' : 'fa-question-circle'}"></i> ${t['bcat_' + catKey]}</span>
+              <span style="font-size:0.9rem;">Subtotal: ${formatCurrency(subtotalBudget)}</span>
+            </div>
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>${t.col_account}</th>
+                    <th class="text-right">${t.col_budgeted}</th>
+                    <th class="text-right">${t.col_actual}</th>
+                    <th class="text-right">${t.col_variance}</th>
+                    <th class="text-center">${t.col_move_cat}</th>
+                    <th class="text-center">${t.col_actions}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rowsHtml || `<tr><td colspan="6" class="text-center" style="color: var(--text-muted); font-style: italic; padding: 12px;">Arrastre o asigne cuentas a esta categoría</td></tr>`}
+                </tbody>
+                ${catAccounts.length > 0 ? `
+                  <tfoot>
+                    <tr style="font-weight: 700; background: #f8fafc;">
+                      <td>${t['bcat_subtotal_' + catKey]}</td>
+                      <td class="text-right">${formatCurrency(subtotalBudget)}</td>
+                      <td class="text-right">${formatCurrency(subtotalActual)}</td>
+                      <td colspan="3"></td>
+                    </tr>
+                  </tfoot>
+                ` : ''}
+              </table>
+            </div>
+          </div>
         `;
-      }).join('');
+      });
+
+      container.innerHTML = categoriesHtml;
+
+      // Calculate Total Planned & Remaining
+      const totalIncomePlanned = categorySubtotals.income;
+      const totalPlannedExpenses = categorySubtotals.savings + categorySubtotals.fixed + categorySubtotals.variable + categorySubtotals.uncategorized;
+      const remainingUnallocated = totalIncomePlanned - totalPlannedExpenses;
+      const isOverBudget = remainingUnallocated < 0;
+
+      summaryContainer.innerHTML = `
+        <div class="budget-summary-card">
+          <div style="font-weight:700; font-size:1.1rem; color:var(--primary); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <span><i class="fas fa-calculator"></i> ${t.budget_total_planned}</span>
+            <span style="color: ${isOverBudget ? 'var(--danger)' : 'var(--success)'}; font-size: 1.25rem;">
+              ${formatCurrency(totalPlannedExpenses)}
+            </span>
+          </div>
+
+          <div class="budget-summary-grid">
+            <div class="budget-summary-item">
+              <label>${t.bcat_income}</label>
+              <div class="value" style="color:#0e7490;">${formatCurrency(categorySubtotals.income)}</div>
+            </div>
+            <div class="budget-summary-item">
+              <label>${t.bcat_savings}</label>
+              <div class="value" style="color:#047857;">${formatCurrency(categorySubtotals.savings)}</div>
+            </div>
+            <div class="budget-summary-item">
+              <label>${t.bcat_fixed}</label>
+              <div class="value" style="color:#b45309;">${formatCurrency(categorySubtotals.fixed)}</div>
+            </div>
+            <div class="budget-summary-item">
+              <label>${t.bcat_variable}</label>
+              <div class="value" style="color:#6d28d9;">${formatCurrency(categorySubtotals.variable)}</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 15px; padding: 12px; border-radius: 6px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; background-color: ${isOverBudget ? '#fee2e2' : '#dcfce7'}; color: ${isOverBudget ? '#991b1b' : '#166534'}; border: 1px solid ${isOverBudget ? '#fecaca' : '#bbf7d0'};">
+            <span><i class="fas ${isOverBudget ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${isOverBudget ? t.budget_over_budget : t.budget_balanced_ok}</span>
+            <span>${t.budget_remaining}: ${formatCurrency(remainingUnallocated)}</span>
+          </div>
+        </div>
+      `;
     }
 
     function deleteBudget(accId) {
@@ -1997,7 +2300,7 @@
     }
 
     function clearAllData() {
-      accounts = getDefaultChartOfAccounts().map(account => ({ ...account, budget: 0 }));
+      accounts = getDefaultChartOfAccounts().map(account => ({ ...account, budget: 0, budgetCategory: undefined }));
       initialBalances = [];
       journalEntries = [];
       draftLines = [];
@@ -2082,13 +2385,13 @@
           { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
           { id: "202", es: "Préstamo Personal", en: "Personal Loan", type: "Liability" },
           { id: "301", es: "Capital Familiar", en: "Family Equity", type: "Equity" },
-          { id: "401", es: "Salario", en: "Salary", type: "Revenue", budget: 3600 },
-          { id: "501", es: "Supermercado", en: "Groceries", type: "Expense", budget: 500 },
-          { id: "502", es: "Vivienda y Servicios Públicos", en: "Housing & Utilities", type: "Expense", budget: 1300 },
-          { id: "503", es: "Transporte", en: "Transportation", type: "Expense", budget: 200 },
-          { id: "504", es: "Entretenimiento y Salidas", en: "Entertainment & Dining Out", type: "Expense", budget: 150 },
-          { id: "505", es: "Gastos Financieros / Intereses", en: "Interest Expense", type: "Expense", budget: 50 },
-          { id: "506", es: "Gastos Médicos / Emergencias", en: "Medical / Emergency Expenses", type: "Expense", budget: 0 }
+          { id: "401", es: "Salario", en: "Salary", type: "Revenue", budget: 3600, budgetCategory: "income" },
+          { id: "501", es: "Supermercado", en: "Groceries", type: "Expense", budget: 500, budgetCategory: "variable" },
+          { id: "502", es: "Vivienda y Servicios Públicos", en: "Housing & Utilities", type: "Expense", budget: 1300, budgetCategory: "fixed" },
+          { id: "503", es: "Transporte", en: "Transportation", type: "Expense", budget: 200, budgetCategory: "variable" },
+          { id: "504", es: "Entretenimiento y Salidas", en: "Entertainment & Dining Out", type: "Expense", budget: 150, budgetCategory: "variable" },
+          { id: "505", es: "Gastos Financieros / Intereses", en: "Interest Expense", type: "Expense", budget: 50, budgetCategory: "fixed" },
+          { id: "506", es: "Gastos Médicos / Emergencias", en: "Medical / Emergency Expenses", type: "Expense", budget: 0, budgetCategory: "variable" }
         ];
 
         const candidateInitialBalances = [
@@ -2198,17 +2501,17 @@
         const candidateAccounts = [
           { id: "101", es: "Efectivo", en: "Cash", type: "Asset" },
           { id: "102", es: "Cuenta Corriente", en: "Checking Account", type: "Asset" },
-          { id: "103", es: "Cuenta de Ahorros", en: "Savings Account", type: "Asset" },
-          { id: "104", es: "Cuenta de Inversión", en: "Investment Account (Brokerage)", type: "Asset" },
+          { id: "103", es: "Cuenta de Ahorros", en: "Savings Account", type: "Asset", budget: 900, budgetCategory: "savings" },
+          { id: "104", es: "Cuenta de Inversión", en: "Investment Account (Brokerage)", type: "Asset", budget: 300, budgetCategory: "savings" },
           { id: "201", es: "Tarjeta de Crédito", en: "Credit Card", type: "Liability" },
           { id: "301", es: "Capital Familiar", en: "Family Equity", type: "Equity" },
-          { id: "401", es: "Salario / Sueldos", en: "Salary / Wages", type: "Revenue", budget: 4200 },
-          { id: "402", es: "Ingresos por Inversiones", en: "Investment Income", type: "Revenue", budget: 60 },
-          { id: "501", es: "Supermercado", en: "Groceries", type: "Expense", budget: 550 },
-          { id: "502", es: "Vivienda y Servicios Públicos", en: "Housing & Utilities", type: "Expense", budget: 1400 },
-          { id: "503", es: "Transporte", en: "Transportation", type: "Expense", budget: 250 },
-          { id: "504", es: "Entretenimiento y Salidas", en: "Entertainment & Dining Out", type: "Expense", budget: 180 },
-          { id: "505", es: "Seguros y Salud", en: "Insurance & Health", type: "Expense", budget: 350 }
+          { id: "401", es: "Salario / Sueldos", en: "Salary / Wages", type: "Revenue", budget: 4200, budgetCategory: "income" },
+          { id: "402", es: "Ingresos por Inversiones", en: "Investment Income", type: "Revenue", budget: 60, budgetCategory: "income" },
+          { id: "501", es: "Supermercado", en: "Groceries", type: "Expense", budget: 550, budgetCategory: "variable" },
+          { id: "502", es: "Vivienda y Servicios Públicos", en: "Housing & Utilities", type: "Expense", budget: 1400, budgetCategory: "fixed" },
+          { id: "503", es: "Transporte", en: "Transportation", type: "Expense", budget: 250, budgetCategory: "variable" },
+          { id: "504", es: "Entretenimiento y Salidas", en: "Entertainment & Dining Out", type: "Expense", budget: 180, budgetCategory: "variable" },
+          { id: "505", es: "Seguros y Salud", en: "Insurance & Health", type: "Expense", budget: 350, budgetCategory: "fixed" }
         ];
 
         const candidateInitialBalances = [
